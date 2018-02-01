@@ -7,7 +7,6 @@
 # Note, to build release configuration on Windows with Visual Studio, use instead
 # > cmake --build . --config Release
 #
-#
 # Testing:
 # > ctest -V
 #

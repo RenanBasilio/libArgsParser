@@ -4,15 +4,12 @@ ArgsParser is a C++ static library written with the goal of providing a simple y
 
 This project is intended to use only STL and Standard Library provided methods in order to create a library which can be easily included in any project, no matter how big or small, without the need for extra dependencies or large libraries of unnecessary methods.
 
-As a library with no dependencies other than the C++ Standard Library, all code in this repository can be merely copied and pasted into any project. This is supported by the MIT License used; the code may be used or modified free of charge so long as credit is given to the original author(s).
+As a library with no dependencies other than the C++ Standard Library, all code in this repository can be merely copied and pasted into any project. This is supported by the MIT License; the code may be used or modified free of charge so long as credit is given to the original author(s).
 
 The below instructions apply to anyone intending to use this library as a static linked library and building it from source.
 
+### Table of Contents
 
-## Table of Contents
-
-- [ArgsParser - C++ Command Line Argument Parser](#argsparser---c-command-line-argument-parser)
-    - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
     - [Requirements](#requirements)
     - [Building From Source](#building-from-source)
