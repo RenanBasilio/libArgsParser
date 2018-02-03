@@ -50,25 +50,17 @@ namespace ArgsParser
              * @param {pFunc} validator A function to check if the parameter provided with the option is valid.
              * @param {pFunc} callback A function to be called if the parameter option is passed.
              * @return {bool} Whether the registration of the parameter succeeded.
+             * 
+             * Note: Setting both identifiers to empty strings will cause the registration to fail as
+             * they cannot be changed later and are required to be able to parse anything
+             * from the command line.
              */
             bool register_parameter_option(
-                std::string name,
-                char short_identifier,
-                std::string placeholder_text = NULL,
-                std::string description = NULL
-            );
-            bool register_parameter_option(
-                std::string name,
-                std::string long_identifier,
-                std::string placeholder_text = NULL,
-                std::string description = NULL
-            );
-            bool register_parameter_option(
                 std::string name, 
-                char short_identifier,
+                std::string short_identifier,
                 std::string long_identifier, 
-                std::string placeholder_text = NULL,
-                std::string description = NULL
+                std::string placeholder_text = "value",
+                std::string description = "Missing description."
             );
 
             /**
@@ -90,6 +82,8 @@ namespace ArgsParser
              */
             bool enable_autohelp();
 
+            void autohelper();
+
         private:
             /**
              * This internal string stores the description of the last non-critical error.
@@ -105,6 +99,7 @@ namespace ArgsParser
              * This internal structure stores all information related to a registered argument.
              */
             struct DataContainer;
+            struct ParameterOptionContainer;
 
             /** 
              * This vector stores the names of all declared argument types for generating help text.
