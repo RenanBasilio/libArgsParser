@@ -10,7 +10,7 @@
 
 #include <unordered_map>
 #include <vector>
-#include <string>
+#include <argsparser/autohelp.h>
 
 namespace ArgsParser
 { 
@@ -47,9 +47,10 @@ namespace ArgsParser
              * @param {std::string} long_identifier The multi character identifier for the option.
              * @param {std::string} placeholder_text The text that will be displayed within <> in the help text.
              * @param {std::string} description The description of the option that will be displayed in the help text.
-             * @param {pFunc} validator A function to check if the parameter provided with the option is valid.
              * @param {pFunc} callback A function to be called if the parameter option is passed.
+             * @param {pFunc} validator A function to check if the parameter provided with the option is valid.
              * @return {bool} Whether the registration of the parameter succeeded.
+             * @
              * 
              * Note: Setting both identifiers to empty strings will cause the registration to fail as
              * they cannot be changed later and are required to be able to parse anything
@@ -60,29 +61,20 @@ namespace ArgsParser
                 std::string short_identifier,
                 std::string long_identifier, 
                 std::string placeholder_text = "value",
-                std::string description = "Missing description."
+                std::string description = "Missing description.",
+                Callback callback = nullptr,
+                Validator validator = nullptr
             );
 
             /**
              * Calling this method will register the 'h' and 'help' switches.
-             * When auto-help is enabled, using either switch will produce the
-             * following output in the standard output stream (cout):
-             * 
-             *      usage: ${program_name} [<parameter1>] ... [<options>]
-             *          -s, --switch                        ${switch_description}
-             *          ...
-             * 
-             *      options
-             *          -o, --option                        ${option_description}
-             *          -p, --parameter-opt <placeholder>   ${parameter_option_description}
-             *          ...
              * 
              * This method will return true if the switches registered successfully. Otherwise,
              * if one or both have already been registered, it will return false.
+             * 
+             * Alternatively, if you need to registe
              */
             bool enable_autohelp();
-
-            void autohelper();
 
         private:
             /**
@@ -94,12 +86,6 @@ namespace ArgsParser
              * This internal boolean stores whether auto-help has been enabled.
              */
             bool autohelp_enabled;
-
-            /**
-             * This internal structure stores all information related to a registered argument.
-             */
-            struct DataContainer;
-            struct ParameterOptionContainer;
 
             /** 
              * This vector stores the names of all declared argument types for generating help text.
@@ -114,6 +100,6 @@ namespace ArgsParser
              * Upon registration of an argument type, both it's identifiers and name will be registered as keys pointing
              * to the DataContainer which contains the remainder of the data.
              */
-            std::unordered_map<std::string, DataContainer*> registered_symbols;
+            std::unordered_map<std::string, Container*> registered_symbols;
     };
 }

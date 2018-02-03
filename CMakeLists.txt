@@ -20,19 +20,37 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 98)
 
 # Instructions to build static library
-include_directories(".")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-file(GLOB_RECURSE SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
-file(GLOB_RECURSE HEAD_FILES ${PROJECT_SOURCE_DIR}/include/argsparser/*.h)
+set(
+    SOURCE_FILES
+    src/autohelp.cpp
+    src/parameter_option.cpp
+    src/parser.cpp
+)
 
-add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
+set(
+    HEADER_FILES
+    include/argsparser.h
+    include/argsparser/autohelp.h
+    include/argsparser/container.h
+    include/argsparser/parser.h
+)
+
+set(
+    PRIVATE_HEADER_FILES
+    include/argsparser/common.h
+    include/argsparser/containerImpl.h
+)
+
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 set_target_properties(
     ${PROJECT_NAME} PROPERTIES
     VERSION 1
     SOVERSION 1
-    PUBLIC_HEADER include/argsparser.h ${HEAD_FILES})
+    PUBLIC_HEADER ${HEADER_FILES}
+    PRIVATE_HEADER ${PRIVATE_HEADER_FILES})
 
-target_include_directories(argsparser PRIVATE src)
 target_include_directories(argsparser PUBLIC include)
 target_include_directories(argsparser PUBLIC include/argsparser)
 
