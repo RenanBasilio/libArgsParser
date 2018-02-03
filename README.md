@@ -10,11 +10,11 @@ The below instructions apply to anyone intending to use this library as a static
 
 ### Table of Contents
 
-- [Quick Start](#quick-start)
-    - [Requirements](#requirements)
-    - [Building From Source](#building-from-source)
-- [Features](#features)
-- [Suggestions and Bug Reports](#suggestions-and-bug-reports)
+* [Quick Start](#quick-start)
+* [Requirements](#requirements)
+    * [Building From Source](#building-from-source)
+* [Features](#features)
+* [Suggestions and Bug Reports](#suggestions-and-bug-reports)
 
 # Quick Start
 ## Requirements
@@ -40,6 +40,8 @@ While the following are planned:
 * Validation of input parameters.
 * Calling a function when an option is passed.
 * Automatically generating `help` usage text.
+
+
 
 # Suggestions and Bug Reports
 

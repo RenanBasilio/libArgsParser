@@ -13,30 +13,41 @@
 # Install:
 # > cmake --build . --target install
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
-PROJECT(ArgsParser VERSION 0.0.1 DESCRIPTION "A simple C++ command line argument parser.")
+cmake_minimum_required(VERSION 3.9)
+project(argsparser DESCRIPTION "A simple C++ command line argument parser.")
 include(GNUInstallDirs)
 enable_language(CXX)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_STANDARD 98)
 
 # Instructions to build static library
-add_library(ArgsParser STATIC src/argsParser.cpp)
-set_target_properties(ArgsParser PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION 0
-    PUBLIC_HEADER include/argsParser.h)
+include_directories(".")
 
-target_include_directories(ArgsParser PRIVATE src)
+file(GLOB_RECURSE SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE HEAD_FILES ${PROJECT_SOURCE_DIR}/include/argsparser/*.h)
+
+add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
+set_target_properties(
+    ${PROJECT_NAME} PROPERTIES
+    VERSION 1
+    SOVERSION 1
+    PUBLIC_HEADER include/argsparser.h ${HEAD_FILES})
+
+target_include_directories(argsparser PRIVATE src)
+target_include_directories(argsparser PUBLIC include)
+target_include_directories(argsparser PUBLIC include/argsparser)
 
 configure_file(ArgsParser.pc.in ArgsParser.pc @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/ArgsParse.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+install(TARGETS ${PROJECT_NAME} 
+    LIBRARY DESTINATION lib 
+    PUBLIC_HEADER DESTINATION include/argsparser
+    ARCHIVE DESTINATION include/argsparser/static)
 
 # Instructions to build test executable
 option(BUILD_ARGSPARSER_TESTS "Build tests." ON)
 if(BUILD_ARGSPARSER_TESTS)
     set(TEST_EXE ArgsParserTest)
     add_executable(${TEST_EXE} test/main.cpp)
-    target_link_libraries(${TEST_EXE} ArgsParser)    
+    target_link_libraries(${TEST_EXE} argsparser)    
 endif(BUILD_ARGSPARSER_TESTS)
 
 # Instructions to build demo executable
@@ -44,5 +55,5 @@ option(BUILD_ARGSPARSER_DEMO "Build a functionality demo." ON)
 if(BUILD_ARGSPARSER_DEMO)
     set(DEMO_EXE ArgsParserDemo)
     add_executable(${DEMO_EXE} demo/main.cpp)
-    target_link_libraries(${DEMO_EXE} ArgsParser)
+    target_link_libraries(${DEMO_EXE} argsparser)
 endif(BUILD_ARGSPARSER_DEMO)
