@@ -13,12 +13,19 @@ namespace ArgsParser
 {
     bool Parser::register_parameter_option(
         std::string name,
-        char short_identifier,
+        std::string short_id,
+        std::string long_id,
         std::string placeholder_text,
         std::string description
     )
     {
-        // To-Do: Implement registration method.
-        return false;
+        // Check if at least one identifier was provided
+        if (short_id == "" && long_id == ""){
+            // To-Do: Registration failed.
+            return false;
+        }
+        if (registered_symbols.count(name) == 0 && 
+            registered_symbols.count(short_id) == 0 && 
+            registered_symbols.count("help") == 0) return false; // To-Do: Register
     }
 }
