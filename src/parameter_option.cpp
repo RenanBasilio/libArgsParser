@@ -1,8 +1,8 @@
 /**
- * register_parameter_option.cpp
+ * parameter_option.cpp
  * 
  * This file contains the implementation of the methods for registering
- * parameter options to the argument parser.
+ * and handling parameter options to the argument parser.
  * 
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
@@ -16,7 +16,9 @@ namespace ArgsParser
         std::string short_id,
         std::string long_id,
         std::string placeholder_text,
-        std::string description
+        std::string description,
+        Callback callback,
+        Validator validator
     )
     {
         // Check if at least one identifier was provided
@@ -26,6 +28,7 @@ namespace ArgsParser
         }
         if (registered_symbols.count(name) == 0 && 
             registered_symbols.count(short_id) == 0 && 
-            registered_symbols.count("help") == 0) return false; // To-Do: Register
+            registered_symbols.count(long_id) == 0) return false; // To-Do: Register
+        else return false;
     }
 }
