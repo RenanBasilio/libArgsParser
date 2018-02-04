@@ -9,28 +9,36 @@
 
 #pragma once
 
-#include <argsparser/containerImpl.h>
 #include <argsparser/common.h>
 
 namespace ArgsParser
 {
     class Container{
         public:
-            char* getName();
-            char  getShortId();
-            char* getLongId();
-            char* getPlaceholderText();
-            char* getDescription();
+            const char* getName();
+            const char  getShortId();
+            const char* getLongId();
+            const char* getPlaceholderText();
+            const char* getDescription();
 
             // To-Do: Make C++17 version with std::optional support.
             std::pair<bool, std::string> getValue();
             std::pair<bool, std::string> getValidation();
 
-        private:
-            const ContainerImpl* container_impl;
-
-            friend class Parser;
-
             Postprocessor getPostprocessor();
+        private:
+            struct ContainerImpl;
+            ContainerImpl* container_impl;
+            
+            friend class Parser;
+            Container(
+                std::string name, 
+                char short_id, 
+                std::string long_id, 
+                std::string placeholder, 
+                std::string desc,
+                Validator validator,
+                bool validation_critical,
+                Postprocessor callback);
     };
 }

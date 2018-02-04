@@ -23,14 +23,15 @@ set(CMAKE_CXX_STANDARD 98)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(
-    SOURCE_FILES
+    SOURCE_FILES 
     src/autohelp.cpp
+    src/container.cpp
     src/parameter_option.cpp
     src/parser.cpp
 )
 
 set(
-    HEADER_FILES
+    HEADER_FILES 
     include/argsparser.h
     include/argsparser/autohelp.h
     include/argsparser/container.h
@@ -40,32 +41,33 @@ set(
 set(
     PRIVATE_HEADER_FILES
     include/argsparser/common.h
-    include/argsparser/containerImpl.h
 )
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+set(LIB_NAME argsparser)
+
+add_library(${LIB_NAME} STATIC ${SOURCE_FILES})
 set_target_properties(
-    ${PROJECT_NAME} PROPERTIES
+    ${LIB_NAME} PROPERTIES
     VERSION 1
     SOVERSION 1
-    PUBLIC_HEADER ${HEADER_FILES}
-    PRIVATE_HEADER ${PRIVATE_HEADER_FILES})
+    PUBLIC_HEADER "${HEADER_FILES}"
+    PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
 
-target_include_directories(argsparser PUBLIC include)
-target_include_directories(argsparser PUBLIC include/argsparser)
+target_include_directories(${LIB_NAME} PUBLIC include)
+target_include_directories(${LIB_NAME} PUBLIC include/argsparser)
 
 configure_file(ArgsParser.pc.in ArgsParser.pc @ONLY)
-install(TARGETS ${PROJECT_NAME} 
+install(TARGETS ${LIB_NAME} 
     LIBRARY DESTINATION lib 
-    PUBLIC_HEADER DESTINATION include/argsparser
-    ARCHIVE DESTINATION include/argsparser/static)
+    PUBLIC_HEADER DESTINATION include/${LIB_NAME}
+    ARCHIVE DESTINATION include/${LIB_NAME}/static)
 
 # Instructions to build test executable
 option(BUILD_ARGSPARSER_TESTS "Build tests." ON)
 if(BUILD_ARGSPARSER_TESTS)
     set(TEST_EXE ArgsParserTest)
     add_executable(${TEST_EXE} test/main.cpp)
-    target_link_libraries(${TEST_EXE} argsparser)    
+    target_link_libraries(${TEST_EXE} ${LIB_NAME})    
 endif(BUILD_ARGSPARSER_TESTS)
 
 # Instructions to build demo executable
@@ -73,5 +75,5 @@ option(BUILD_ARGSPARSER_DEMO "Build a functionality demo." ON)
 if(BUILD_ARGSPARSER_DEMO)
     set(DEMO_EXE ArgsParserDemo)
     add_executable(${DEMO_EXE} demo/main.cpp)
-    target_link_libraries(${DEMO_EXE} argsparser)
+    target_link_libraries(${DEMO_EXE} ${LIB_NAME})
 endif(BUILD_ARGSPARSER_DEMO)
