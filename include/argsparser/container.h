@@ -31,6 +31,6 @@ namespace ArgsParser
 
             friend class Parser;
 
-            std::tuple<bool, Callback, Postprocessor> getPostFunction();
+            Postprocessor getPostprocessor();
     };
 }
