@@ -27,16 +27,14 @@ namespace ArgsParser
 
             /**
              * This method registers an input parameter option to the parser. Usage example:
-             *      ArgsParser.register_option("File", 'f', "file", "file", 'The file to open');
+             *      ArgsParser.register_option("file", "f, file", "filename", 'The file to open');
              * 
              * The above line will enable parsing the following lines:
              *      myprogram -f example.txt
              *      myprogram --file example.txt
              * 
              * And generate the following help text:
-             *      myprogram -h
-             *          ...
-             *          -f, --file <file>      The file to open.
+             *      -f, --file <filename>      The file to open.
              * 
              * The method returns true if the option was registered successfully. Otherwise
              * it returns false and sets the "error_description" variable to a description of the
@@ -50,29 +48,18 @@ namespace ArgsParser
              * @param {pFunc} callback A function to be called if the parameter option is passed.
              * @param {pFunc} validator A function to check if the parameter provided with the option is valid.
              * @return {bool} Whether the registration of the parameter succeeded.
-             * @
              * 
              * Note: Setting both identifiers to empty strings will cause the registration to fail as
              * they cannot be changed later and are required to be able to parse anything
              * from the command line.
              */
             bool register_parameter_option(
-                std::string name, 
-                std::string short_identifier,
-                std::string long_identifier, 
-                std::string placeholder_text = "value",
-                std::string description = "Missing description.",
-                Validator validator = nullptr,
-                Callback callback = nullptr
-            );
-            bool register_parameter_option(
                 std::string name,
-                std::string short_identifier,
-                std::string long_identifier,
-                std::string placeholder_text = "value",
-                std::string description = "Missing description.",
-                Validator validator = nullptr,
-                Postprocessor Postprocessor = nullptr
+                std::string identifiers,
+                std::string placeholder_text,
+                std::string description,
+                Validator validator,
+                Postprocessor callback
             );
 
             /**
