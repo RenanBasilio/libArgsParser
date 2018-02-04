@@ -62,8 +62,17 @@ namespace ArgsParser
                 std::string long_identifier, 
                 std::string placeholder_text = "value",
                 std::string description = "Missing description.",
-                Callback callback = nullptr,
-                Validator validator = nullptr
+                Validator validator = nullptr,
+                Callback callback = nullptr
+            );
+            bool register_parameter_option(
+                std::string name,
+                std::string short_identifier,
+                std::string long_identifier,
+                std::string placeholder_text = "value",
+                std::string description = "Missing description.",
+                Validator validator = nullptr,
+                Postprocessor Postprocessor = nullptr
             );
 
             /**
