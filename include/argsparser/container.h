@@ -25,7 +25,6 @@ namespace ArgsParser
             std::pair<bool, std::string> getValue();
             std::pair<bool, std::string> getValidation();
 
-            Postprocessor getPostprocessor();
         private:
             struct ContainerImpl;
             ContainerImpl* container_impl;
@@ -40,5 +39,8 @@ namespace ArgsParser
                 Validator validator,
                 bool validation_critical,
                 Postprocessor callback);
+
+            Validator getValidator();
+            Postprocessor getPostprocessor();
     };
 }
