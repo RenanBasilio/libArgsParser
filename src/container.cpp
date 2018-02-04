@@ -116,4 +116,12 @@ namespace ArgsParser
     std::pair<bool, std::string> Container::getValidation(){
         return std::make_pair(container_impl->validation_succeeded, container_impl->validation_failure_reason);
     }
+
+    Validator Container::getValidator(){
+        return container_impl->validator;
+    }
+
+    Postprocessor Container::getPostprocessor(){
+        return container_impl->callback;
+    }
 }
