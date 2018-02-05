@@ -20,7 +20,8 @@ namespace ArgsParser
      */
     class Parser{
         public:
-            Parser(bool autohelp);
+            Parser();
+            Parser(bool autohelp, bool validation_always_critical);
             ~Parser();
 
             const std::string& error_description;
@@ -55,7 +56,7 @@ namespace ArgsParser
              */
             bool register_parameter_option(
                 std::string name,
-                std::string identifiers,
+                std::vector<std::string> identifiers,
                 std::string placeholder_text,
                 std::string description,
                 Validator validator,
@@ -74,29 +75,7 @@ namespace ArgsParser
             bool enable_autohelp();
 
         private:
-            /**
-             * This internal string stores the description of the last non-critical error.
-             */
-            std::string error_description_;
-
-            /**
-             * This internal boolean stores whether auto-help has been enabled.
-             */
-            bool autohelp_enabled;
-
-            /** 
-             * This vector stores the names of all declared argument types for generating help text.
-             */
-            std::vector<std::string> names;
-
-            /** 
-             * This map stores key value pairs for quick retrieval of arguments by their identifier or name through
-             *      get('Help')
-             *      get('h')
-             *      get('help')
-             * Upon registration of an argument type, both it's identifiers and name will be registered as keys pointing
-             * to the DataContainer which contains the remainder of the data.
-             */
-            std::unordered_map<std::string, Container*> registered_symbols;
+            struct ParserImpl;
+            ParserImpl* parser_impl;
     };
 }
