@@ -41,6 +41,7 @@ set(
 set(
     PRIVATE_HEADER_FILES
     include/argsparser/common.h
+    include/argsparser/parserImpl.h
 )
 
 set(LIB_NAME argsparser)
