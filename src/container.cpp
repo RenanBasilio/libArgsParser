@@ -15,10 +15,8 @@ namespace ArgsParser
 
         // The name of the option
         const char* name;
-        // The short single-character identifier
-        const char short_id;
-        // The long multi-character identifier
-        const char* long_id;
+        // The vector of identifiers registered to this argument.
+        const std::vector<const char*> identifiers;
         // The placeholder (if this is a parameter option) to display when generating help text
         const char* placeholder;
         // The description to display when generating help text
@@ -27,8 +25,10 @@ namespace ArgsParser
         const bool validation_critical;
         // The function to be used to validate the option
         const Validator validator;
+        // The function to be used as a postprocessor method if the option is passed
+        const Postprocessor postprocessor;
         // The function to be used as a callback method if the option is passed
-        const Postprocessor callback;
+        const Callback callback;
         
         /* The following parameters are set during parsing and validation. */
 
@@ -48,20 +48,21 @@ namespace ArgsParser
          * Constructor for the Container structure.
          */
         // This constructor is used when a validator and postprocessor type function is provided.
-        ContainerImpl(std::string name, 
-            char short_id, 
-            std::string long_id, 
+        ContainerImpl(std::string name,
+            std::vector<const char*> identifiers,
             std::string placeholder, 
             std::string desc,
-            Validator validator = nullptr,
-            bool validation_critical = true,
-            Postprocessor callback = nullptr) :
+            bool validation_critical,
+            Validator validator,
+            Postprocessor postprocessor,
+            Callback callback) :
             name(name.c_str()),
-            short_id(short_id),
+            identifiers(identifiers),
             placeholder(placeholder.c_str()),
             desc(desc.c_str()),
             validator(validator),
             validation_critical(validation_critical),
+            postprocessor(postprocessor),
             callback(callback)
             {
 
@@ -70,22 +71,23 @@ namespace ArgsParser
 
     Container::Container(
         std::string name, 
-        char short_id, 
-        std::string long_id, 
+        std::vector<const char*> identifiers,
         std::string placeholder, 
         std::string desc,
-        Validator validator,
         bool validation_critical,
-        Postprocessor callback)
+        Validator validator,
+        Postprocessor postprocessor,
+        Callback callback
+        )
     {
         container_impl = new ContainerImpl(
             name,
-            short_id, 
-            long_id, 
+            identifiers,
             placeholder, 
-            desc, 
-            validator, 
+            desc,
             validation_critical, 
+            validator,
+            postprocessor,
             callback);
     }
 
@@ -93,12 +95,8 @@ namespace ArgsParser
         return container_impl->name;
     }
 
-    const char Container::getShortId(){
-        return container_impl->short_id;
-    }
-
-    const char* Container::getLongId(){
-        return container_impl->long_id;
+    std::vector<const char*> Container::getIdentifiers(){
+        return container_impl->identifiers;
     }
 
     const char* Container::getPlaceholderText(){
@@ -122,6 +120,22 @@ namespace ArgsParser
     }
 
     Postprocessor Container::getPostprocessor(){
+        return container_impl->postprocessor;
+    }
+
+    Callback Container::getCallback(){
         return container_impl->callback;
+    }
+
+    bool Container::hasValidator(){
+        return (container_impl->validator != nullptr);
+    }
+
+    bool Container::hasPostprocessor(){
+        return (container_impl->postprocessor != nullptr);
+    }
+
+    bool Container::hasCallback(){
+        return (container_impl->callback != nullptr);
     }
 }

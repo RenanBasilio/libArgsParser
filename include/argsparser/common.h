@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace ArgsParser
 {
@@ -27,7 +28,7 @@ namespace ArgsParser
     typedef bool (*Validator) (const std::string *);
 
     /**
-     * This is the declaration of a post-processor/callback function.
+     * This is the declaration of a post-processor function.
      * 
      * Post-processor functions must always take a string (the string parsed for
      * the option by the parser) and can take a pointer to anything (for any
@@ -35,5 +36,15 @@ namespace ArgsParser
      * This function will be called after validation if the parsed value validates
      * successfully.
      */
-    typedef void (*Postprocessor) (const std::string *, const void *);    
+    typedef void (*Postprocessor) (const std::string *, const void *);
+
+    /**
+     * This is the declaration of a callback function. 
+     * 
+     * Callback methods do not take any arguments and must not return anything. 
+     * They are called after validation but do not require the value to validate successfully.
+     * This type of method is recommended to be called as an entry point for a positional
+     * argument or switch.
+     */
+    typedef void (*Callback) ();
 }
