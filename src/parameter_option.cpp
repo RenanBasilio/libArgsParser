@@ -13,13 +13,14 @@ namespace ArgsParser
 {
     bool Parser::register_parameter_option(
         std::string name,
-        std::string identifiers,
+        std::vector<std::string> identifiers,
         std::string placeholder_text,
         std::string description,
         Validator validator,
         Postprocessor callback
     )
     {
+        
         return false;
     }
 }
