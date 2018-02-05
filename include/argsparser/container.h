@@ -30,6 +30,7 @@ namespace ArgsParser
             ContainerImpl* container_impl;
             
             friend class Parser;
+
             Container(
                 std::string name, 
                 std::vector<const char*> identifiers,
@@ -39,6 +40,8 @@ namespace ArgsParser
                 Validator validator,
                 Postprocessor postprocessor,
                 Callback callback);
+
+            ~Container();
 
             bool hasValidator();
             Validator getValidator();
