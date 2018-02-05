@@ -11,8 +11,6 @@
 namespace ArgsParser
 {
     struct Container::ContainerImpl{
-        /* The following members are constant. Once set by the constructor they cannot be changed. */
-
         // The name of the option
         const char* name;
         // The vector of identifiers registered to this argument.
@@ -89,6 +87,11 @@ namespace ArgsParser
             validator,
             postprocessor,
             callback);
+    }
+
+    Container::~Container(){
+        delete container_impl;
+        container_impl = nullptr;
     }
 
     const char* Container::getName(){
