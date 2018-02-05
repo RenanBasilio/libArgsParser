@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <exception>
 
 namespace ArgsParser
 {
@@ -25,7 +26,7 @@ namespace ArgsParser
      * validation to fail. The exception will be handled internally and the error message
      * made available if validation failures are not to be considered critical.
      */
-    typedef bool (*Validator) (const std::string *);
+    typedef bool (*Validator) (const std::string);
 
     /**
      * This is the declaration of a post-processor function.
@@ -36,7 +37,7 @@ namespace ArgsParser
      * This function will be called after validation if the parsed value validates
      * successfully.
      */
-    typedef void (*Postprocessor) (const std::string *, const void *);
+    typedef void (*Postprocessor) (const std::string, const void *);
 
     /**
      * This is the declaration of a callback function. 

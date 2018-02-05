@@ -26,6 +26,8 @@ namespace ArgsParser
 
             const std::string& error_description;
 
+            bool isRegistered(std::string identifiers);
+
             /**
              * This method registers an input parameter option to the parser. Usage example:
              *      ArgsParser.register_option("file", "f, file", "filename", 'The file to open');
@@ -64,7 +66,7 @@ namespace ArgsParser
             );
 
             /**
-             * Calling this method will register the 'h' and 'help' switches.
+             * Calling this method will register the 'h' and 'help' switches under 'help'.
              * 
              * This method will return true if the switches registered successfully. Otherwise,
              * if one or both have already been registered, it will return false.

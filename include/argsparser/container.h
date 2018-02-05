@@ -19,7 +19,7 @@ namespace ArgsParser
             const char* getPlaceholderText();
             const char* getDescription();
             
-            std::vector<const char*> getIdentifiers();
+            std::vector<std::string> getIdentifiers();
 
             // To-Do: Make C++17 version with std::optional support.
             std::pair<bool, std::string> getValue();
@@ -33,7 +33,7 @@ namespace ArgsParser
 
             Container(
                 std::string name, 
-                std::vector<const char*> identifiers,
+                std::vector<std::string> identifiers,
                 std::string placeholder, 
                 std::string desc,
                 bool validation_critical,

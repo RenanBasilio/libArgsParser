@@ -14,7 +14,7 @@ namespace ArgsParser
         // The name of the option
         const char* name;
         // The vector of identifiers registered to this argument.
-        const std::vector<const char*> identifiers;
+        const std::vector<std::string> identifiers;
         // The placeholder (if this is a parameter option) to display when generating help text
         const char* placeholder;
         // The description to display when generating help text
@@ -47,7 +47,7 @@ namespace ArgsParser
          */
         // This constructor is used when a validator and postprocessor type function is provided.
         ContainerImpl(std::string name,
-            std::vector<const char*> identifiers,
+            std::vector<std::string> identifiers,
             std::string placeholder, 
             std::string desc,
             bool validation_critical,
@@ -69,7 +69,7 @@ namespace ArgsParser
 
     Container::Container(
         std::string name, 
-        std::vector<const char*> identifiers,
+        std::vector<std::string> identifiers,
         std::string placeholder, 
         std::string desc,
         bool validation_critical,
@@ -98,7 +98,7 @@ namespace ArgsParser
         return container_impl->name;
     }
 
-    std::vector<const char*> Container::getIdentifiers(){
+    std::vector<std::string> Container::getIdentifiers(){
         return container_impl->identifiers;
     }
 
