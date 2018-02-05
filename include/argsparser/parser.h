@@ -59,7 +59,7 @@ namespace ArgsParser
                 std::string placeholder_text,
                 std::string description,
                 Validator validator,
-                Postprocessor callback
+                Postprocessor postprocessor
             );
 
             /**
@@ -68,7 +68,8 @@ namespace ArgsParser
              * This method will return true if the switches registered successfully. Otherwise,
              * if one or both have already been registered, it will return false.
              * 
-             * Alternatively, if you need to registe
+             * Alternatively, if you wish to register your own help provider, register a
+             * switch with the method you wish to use as the callback function.
              */
             bool enable_autohelp();
 
