@@ -24,7 +24,8 @@ namespace ArgsParser
      * 
      * Optionally, validator functions may throw an exception with the error that caused
      * validation to fail. The exception will be handled internally and the error message
-     * made available if validation failures are not to be considered critical.
+     * made available if validation failures are not to be considered critical. Otherwise
+     * it will be rethrown.
      */
     typedef bool (*Validator) (const std::string);
 

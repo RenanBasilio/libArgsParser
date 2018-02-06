@@ -18,13 +18,13 @@ namespace ArgsParser
      * This method outputs usage help text to the provided stream (which is
      * the standard output stream "std::cout" by default) in the following
      * form:
-     *      usage: ${program_name} [<${parameter1}>] ... [<options>]
+     *      usage: ${program_name} [<positional>] ... [<args>]
      *          -s, --switch                        ${switch_description}
      *          ...
      * 
      *      options
      *          -o, --option                        ${option_description}
-     *          -p, --parameter-opt <placeholder>   ${parameter_option_description}
+     *          -p, --value-option <placeholder>    ${value_option_description}
      *          ...
      */
     void autohelper(std::ostream& stream = std::cout);
