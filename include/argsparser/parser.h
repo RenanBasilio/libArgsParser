@@ -19,6 +19,10 @@ namespace ArgsParser
      * without additional features such as parameter validation.
      */
     class Parser{
+        private:
+            struct ParserImpl;
+            ParserImpl* parser_impl;
+
         public:
             Parser();
             Parser(bool autohelp, bool validation_always_critical);
@@ -29,8 +33,8 @@ namespace ArgsParser
             bool isRegistered(std::string identifiers);
 
             /**
-             * This method registers an input parameter option to the parser. Usage example:
-             *      ArgsParser.register_option("file", "f, file", "filename", 'The file to open');
+             * This method registers an input value option to the parser. Usage example:
+             *      ArgsParser.register_option("file", {"f, file"}, "filename", 'The file to open');
              * 
              * The above line will enable parsing the following lines:
              *      myprogram -f example.txt
@@ -44,8 +48,7 @@ namespace ArgsParser
              * error.
              * 
              * @param {std::string} name The name of the option.
-             * @param {char} short_identifier The single character identifier for the option.
-             * @param {std::string} long_identifier The multi character identifier for the option.
+             * @param {std::vector<std::string>} identifiers The identifiers to register for this option
              * @param {std::string} placeholder_text The text that will be displayed within <> in the help text.
              * @param {std::string} description The description of the option that will be displayed in the help text.
              * @param {pFunc} callback A function to be called if the parameter option is passed.
@@ -56,7 +59,7 @@ namespace ArgsParser
              * they cannot be changed later and are required to be able to parse anything
              * from the command line.
              */
-            bool register_parameter_option(
+            bool register_value_option(
                 std::string name,
                 std::vector<std::string> identifiers,
                 std::string placeholder_text,
@@ -75,9 +78,5 @@ namespace ArgsParser
              * switch with the method you wish to use as the callback function.
              */
             bool enable_autohelp();
-
-        private:
-            struct ParserImpl;
-            ParserImpl* parser_impl;
     };
 }
