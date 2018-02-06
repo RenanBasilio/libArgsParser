@@ -33,3 +33,6 @@
 
 # CMake build folder
 build
+
+# VSCode system specific files
+.vscode/settings.json
