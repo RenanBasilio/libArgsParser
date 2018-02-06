@@ -26,7 +26,7 @@ set(
     SOURCE_FILES 
     src/autohelp.cpp
     src/container.cpp
-    src/parameter_option.cpp
+    src/value_option.cpp
     src/parser.cpp
 )
 
@@ -34,17 +34,18 @@ set(
     HEADER_FILES 
     include/argsparser.h
     include/argsparser/autohelp.h
+    include/argsparser/common.h
     include/argsparser/container.h
     include/argsparser/parser.h
 )
 
 set(
     PRIVATE_HEADER_FILES
-    include/argsparser/common.h
+    include/argsparser/containerImpl.h
     include/argsparser/parserImpl.h
 )
 
-set(LIB_NAME argsparser)
+set(LIB_NAME libargsparser)
 
 add_library(${LIB_NAME} STATIC ${SOURCE_FILES})
 set_target_properties(
