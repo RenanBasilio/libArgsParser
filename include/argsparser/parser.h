@@ -25,7 +25,7 @@ namespace ArgsParser
 
         public:
             Parser();
-            Parser(bool autohelp, bool validation_always_critical);
+            Parser(bool autohelp, bool errors_critical = false, bool validation_critical = false);
             ~Parser();
 
             const std::string& error_description;
@@ -70,6 +70,11 @@ namespace ArgsParser
                 Postprocessor postprocessor
             );
 
+            /**
+             * This method sanitizes a string by escaping any special characters
+             * contained in it.
+             */
+            std::string sanitize_string(std::string string);
 
             /**
              * Calling this method will register the 'h' and 'help' switches under 'help'.

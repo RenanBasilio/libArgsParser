@@ -15,10 +15,15 @@ namespace ArgsParser
         std::string error_description;
 
         // This internal boolean stores whether auto-help has been enabled.
-        bool autohelp_enabled;
+        bool autohelp_enabled = false;
 
-        // This internal boolean stores whether validation failures should throw unhandled exceptions by default.
-        bool validation_always_critical;
+        // This internal boolean stores whether parsing errors should be 
+        // considered critical and throw unhandled exceptions.
+        bool errors_critical = false;
+
+        // This internal boolean stores whether validation failures should
+        // throw unhandled exceptions by default.
+        bool validation_always_critical = false;
 
         /** 
          * This map stores key value pairs for quick retrieval of arguments by their identifier or name through
@@ -53,6 +58,17 @@ namespace ArgsParser
             Postprocessor postprocessor,
             Callback callback
         );
+
+        /**
+         * This method makes a valid identifier from a string. this is done by
+         * prefixing a single '-' character to the string if it is only one
+         * character long and '--' if it contains multiple character.
+         * 
+         * This method throws an exception if any characters in the string are
+         * invalid. Valid characters are:
+         *      "-AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"
+         */
+        std::string make_identifier(std::string string);
 
         unsigned int current = 0;
 
