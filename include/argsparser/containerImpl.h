@@ -15,6 +15,9 @@ namespace ArgsParser
         const char* name;
         // The type of the option
         const ArgType option_type;
+        // If this is a parameter option, the maximum and minimum number of arguments it can take
+        const size_t min_values;
+        const size_t max_values;
         // The vector of identifiers registered to this argument.
         const std::vector<std::string> identifiers;
         // The placeholder (if this is a parameter option) to display when generating help text
@@ -34,8 +37,9 @@ namespace ArgsParser
 
         // Whether the parameter is active
         bool isActive = false;
-        // The value of the parameter
-        std::string value = "";
+        // The values passed for the parameter. If multiple values are passed
+        // they will be validated one at a time.
+        std::vector<std::string> value;
         
         // If validation succeeds, this is set to true and the failure reason is left empty.
         // If validation is critical and fails, exception is thrown and not handled.
@@ -50,6 +54,8 @@ namespace ArgsParser
         // This constructor is used when a validator and postprocessor type function is provided.
         ContainerImpl(std::string name,
             ArgsParser::ArgType type,
+            size_t min_values,
+            size_t max_values,
             std::vector<std::string> identifiers,
             std::string placeholder, 
             std::string desc,
@@ -59,6 +65,8 @@ namespace ArgsParser
             Callback callback) :
             name(name.c_str()),
             option_type(type),
+            min_values(min_values),
+            max_values(max_values),
             identifiers(identifiers),
             placeholder(placeholder.c_str()),
             desc(desc.c_str()),
@@ -67,7 +75,7 @@ namespace ArgsParser
             postprocessor(postprocessor),
             callback(callback)
             {
-
+                value = std::vector<std::string>();
             }
     };
 }

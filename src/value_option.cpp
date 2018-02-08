@@ -15,6 +15,8 @@ namespace ArgsParser
     bool Parser::register_value_option(
         std::string name,
         std::vector<std::string> identifiers,
+        unsigned int min_values,
+        unsigned int max_values,
         std::string placeholder_text,
         std::string description,
         Validator validator,
@@ -23,7 +25,7 @@ namespace ArgsParser
     {
         try{
             // First check if all identifiers are open to be registered.
-            // To-Do: String sanitization.
+            // TODO: String sanitization.
             if(isRegistered(name)) 
                 throw std::runtime_error( "Registration Error: Name \"" + name + "\" is already registered." );
             for(size_t i = 0; i < identifiers.size(); i++)
@@ -37,6 +39,8 @@ namespace ArgsParser
             Container* item = parser_impl->make_container(
                 name,
                 ArgType::Value,
+                min_values,
+                max_values,
                 identifiers, 
                 placeholder_text, 
                 description, 

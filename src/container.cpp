@@ -40,6 +40,11 @@ namespace ArgsParser
     }
 
     std::pair<bool, std::string> Container::getValue(){
+        const bool isActive = container_impl->isActive;
+        return std::make_pair(isActive, isActive? container_impl->value[0] : "");
+    }
+
+    std::pair<bool, std::vector<std::string>> Container::getValues(){
         return std::make_pair(container_impl->isActive, container_impl->value);
     }
 
