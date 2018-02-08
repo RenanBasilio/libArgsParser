@@ -26,8 +26,8 @@ set(
     SOURCE_FILES 
     src/autohelp.cpp
     src/container.cpp
-    src/value_option.cpp
     src/parser.cpp
+    src/value_option.cpp
 )
 
 set(

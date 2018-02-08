@@ -18,12 +18,13 @@ namespace ArgsParser
         error_description(parser_impl->error_description)
         { }
 
-    Parser::Parser(bool autohelp, bool validation_always_critical):
+    Parser::Parser(bool autohelp, bool errors_critical, bool validation_critical):
         parser_impl(new ParserImpl()),
         error_description(parser_impl->error_description)
     {
         if(autohelp) enable_autohelp();
-        if(validation_always_critical) parser_impl->validation_always_critical = true;
+        if(validation_critical) parser_impl->validation_always_critical = true;
+        if(errors_critical) parser_impl->errors_critical = true;
     }
 
     Parser::~Parser(){
@@ -50,7 +51,6 @@ namespace ArgsParser
         }
         catch (const std::exception& e){
             parser_impl->error_description = e.what();
-            e.~exception();
             return false;
         }
     }
@@ -124,5 +124,40 @@ namespace ArgsParser
         Container* interface = new Container(backend);
 
         return interface;
+    };
+
+    std::string Parser::ParserImpl::make_identifier(const std::string string){
+        // First check if this is a valid string.
+        const size_t invalid_char = string.find_first_not_of("-AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz");
+        if(invalid_char != std::string::npos) {
+            throw std::runtime_error( std::string("Invalid character '") + string.at(invalid_char) + std::string("'") );
+        }
+        // Then check if the string contains at least one letter (and does not end in a dash)
+        if(string.size() > 0 && string.at(string.size()-1) == '-'){
+            throw std::runtime_error( "Identifier must not end in a dash.");
+        }
+        // Next, check if string is correctly prefixed. If not, add prefix dashes.
+        std::string idString;
+
+        // If string is 1 character long, prefix a dash to it.
+        if (string.size() == 1) idString = "-" + string;
+        // Otherwise, get how many prefix '-' characters it has and add enough to make two.
+        else {
+            const size_t first_char = string.find_first_not_of("-");
+            std::string identifier = string.substr(first_char);
+            idString = identifier.size() == 1? ("-" + identifier) : ("--" + identifier);
+        }
+
+        switch (string.size())
+        {
+            
+            case 1:
+                idString = "-" + string;
+            
+            default:
+                break;
+        }
+        
+        return idString;
     };
 }

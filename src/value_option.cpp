@@ -25,13 +25,14 @@ namespace ArgsParser
     {
         try{
             // First check if all identifiers are open to be registered.
-            // TODO: String sanitization.
             if(isRegistered(name)) 
-                throw std::runtime_error( "Registration Error: Name \"" + name + "\" is already registered." );
+                throw std::runtime_error( "Name \"" + name + "\" is already registered." );
+
             for(size_t i = 0; i < identifiers.size(); i++)
             {
-                if(isRegistered(identifiers[i])) 
-                    throw std::runtime_error( "Registration Error: Identifier \"" + identifiers[i] + "\" is already registered." );
+                identifiers[i] = parser_impl->make_identifier(identifiers[i]);
+                if(isRegistered(identifiers[i]))
+                    throw std::runtime_error( "Identifier \"" + identifiers[i] + "\" is already registered." );
             }
         
             // If check was successful, create a new container object.
@@ -64,7 +65,9 @@ namespace ArgsParser
             return true;
         }
         catch (const std::exception& e) {
-            parser_impl->error_description = e.what();
+            if(parser_impl->errors_critical) throw;
+            
+            parser_impl->error_description = std::string("Registration Error: ") + e.what();
             return false;
         }
         
