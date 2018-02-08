@@ -104,7 +104,6 @@ namespace ArgsParser
         std::string description,
         bool validation_critical,
         Validator validator,
-        Postprocessor postprocessor,
         Callback callback
     )
     {
@@ -118,7 +117,6 @@ namespace ArgsParser
             description, 
             validation_critical,
             validator,
-            postprocessor,
             callback);
 
         Container* interface = new Container(backend);

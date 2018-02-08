@@ -33,8 +33,20 @@ namespace ArgsParser
             bool isRegistered(std::string identifiers);
 
             /**
+             * This method register a positional argument to the parser. Usage example:
+             *      ArgsParser.register_positional("file", "filename", )
+             */
+            bool register_positional(
+                std::string name,
+                std::string placeholder_text,
+                Validator validator = nullptr,
+                Callback callback = nullptr
+            );
+
+            /**
              * This method registers an input value option to the parser. Usage example:
-             *      ArgsParser.register_option("file", {"f, file"}, "filename", 'The file to open');
+             *      ArgsParser.register_option(
+             *          "file", {"f", "file"}, "filename", "The file to open", &file_exists, );
              * 
              * The above line will enable parsing the following lines:
              *      myprogram -f example.txt
@@ -51,8 +63,8 @@ namespace ArgsParser
              * @param {std::vector<std::string>} identifiers The identifiers to register for this option
              * @param {std::string} placeholder_text The text that will be displayed within <> in the help text.
              * @param {std::string} description The description of the option that will be displayed in the help text.
-             * @param {pFunc} callback A function to be called if the parameter option is passed.
              * @param {pFunc} validator A function to check if the parameter provided with the option is valid.
+             * @param {pFunc} callback A function to be called if the parameter option is passed.
              * @return {bool} Whether the registration of the parameter succeeded.
              * 
              * Note: Setting both identifiers to empty strings will cause the registration to fail as
@@ -62,19 +74,35 @@ namespace ArgsParser
             bool register_value_option(
                 std::string name,
                 std::vector<std::string> identifiers,
-                unsigned int min_values,
-                unsigned int max_values,
                 std::string placeholder_text,
                 std::string description,
-                Validator validator,
-                Postprocessor postprocessor
+                unsigned int max_values,
+                unsigned int min_values = 1,
+                Validator validator = nullptr,
+                Callback callback = nullptr
             );
-
-            /**
-             * This method sanitizes a string by escaping any special characters
-             * contained in it.
-             */
-            std::string sanitize_string(std::string string);
+            bool register_value_option(
+                std::string name,
+                std::vector<std::string> identifiers,
+                Validator validator = nullptr,
+                Callback callback = nullptr
+            );
+            bool register_value_option(
+                std::string name,
+                std::vector<std::string> identifiers,
+                unsigned int max_values,
+                unsigned int min_values = 1,
+                Validator validator = nullptr,
+                Callback callback = nullptr
+            );
+            bool register_value_option(
+                std::string name,
+                std::vector<std::string> identifiers,
+                std::string placeholder_text,
+                std::string description,
+                Validator validator = nullptr,
+                Callback callback = nullptr
+            );
 
             /**
              * Calling this method will register the 'h' and 'help' switches under 'help'.

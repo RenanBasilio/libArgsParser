@@ -28,8 +28,6 @@ namespace ArgsParser
         const bool validation_critical;
         // The function to be used to validate the option
         const Validator validator;
-        // The function to be used as a postprocessor method if the option is passed
-        const Postprocessor postprocessor;
         // The function to be used as a callback method if the option is passed
         const Callback callback;
         
@@ -61,7 +59,6 @@ namespace ArgsParser
             std::string desc,
             bool validation_critical,
             Validator validator,
-            Postprocessor postprocessor,
             Callback callback) :
             name(name.c_str()),
             option_type(type),
@@ -72,7 +69,6 @@ namespace ArgsParser
             desc(desc.c_str()),
             validator(validator),
             validation_critical(validation_critical),
-            postprocessor(postprocessor),
             callback(callback)
             {
                 value = std::vector<std::string>();

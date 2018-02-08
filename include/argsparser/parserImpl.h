@@ -11,6 +11,9 @@
 namespace ArgsParser
 {
     struct Parser::ParserImpl{
+        // This string stores the parsed name of the program.
+        std::string program_name;
+
         // This string stores the description of the last non-critical error.
         std::string error_description;
 
@@ -55,7 +58,6 @@ namespace ArgsParser
             std::string description,
             bool validation_critical,
             Validator validator,
-            Postprocessor postprocessor,
             Callback callback
         );
 
