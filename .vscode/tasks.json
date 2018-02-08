@@ -12,7 +12,8 @@
             "command": "cmake",
             "args": [
                 ".."
-            ]
+            ],
+            "problemMatcher": []
         },
         {
             "label": "Build (Debug)",
@@ -47,13 +48,27 @@
             "dependsOn": "Make",
             "command": "cmake",
             "args": [
-                "--build",
-                ".",
-                "--config",
-                "Release"
+                "--build" , ".",
+                "--config", "Release"
             ],
             "problemMatcher": [
                 "$gcc"
+            ]
+        },
+        {
+            "label": "Test (Debug)",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "dependsOn": "Build (Debug)",
+            "command": "ctest",
+            "args": [
+                "-C", "Debug"
             ]
         }
     ]

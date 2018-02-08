@@ -69,7 +69,7 @@ namespace ArgsParser
         // memory overhead of keeping a reference to each name.
 
         std::unordered_map<std::string, Container*>::iterator it;
-        for (it = registered_symbols.begin(); it != registered_symbols.end(); it++){
+        for (it = registered_symbols.begin(); it != registered_symbols.end(); ++it){
             if(it->first.at(0) == '&') {
                 // Check if this key is its name.
                 const char* name = it->second->getName();
@@ -97,6 +97,8 @@ namespace ArgsParser
     Container* Parser::ParserImpl::make_container(
         std::string name,
         ArgType type,
+        size_t min_values,
+        size_t max_values,
         std::vector<std::string> identifiers,
         std::string placeholder_text,
         std::string description,
@@ -109,8 +111,10 @@ namespace ArgsParser
         Container::ContainerImpl* backend = new Container::ContainerImpl(
             name,
             type,
-            identifiers, 
-            placeholder_text, 
+            min_values,
+            max_values,
+            identifiers,
+            placeholder_text,
             description, 
             validation_critical,
             validator,

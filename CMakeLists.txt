@@ -65,17 +65,13 @@ install(TARGETS ${LIB_NAME}
     ARCHIVE DESTINATION include/${LIB_NAME}/static)
 
 # Instructions to build test executable
-option(BUILD_ARGSPARSER_TESTS "Build tests." ON)
+option(BUILD_ARGSPARSER_TESTS "Build Tests." ON)
 if(BUILD_ARGSPARSER_TESTS)
-    set(TEST_EXE ArgsParserTest)
-    add_executable(${TEST_EXE} test/main.cpp)
-    target_link_libraries(${TEST_EXE} ${LIB_NAME})    
+    include(test/CMakeTests.cmake)
 endif(BUILD_ARGSPARSER_TESTS)
 
 # Instructions to build demo executable
-option(BUILD_ARGSPARSER_DEMO "Build a functionality demo." ON)
+option(BUILD_ARGSPARSER_DEMO "Build Functionality Demo." ON)
 if(BUILD_ARGSPARSER_DEMO)
-    set(DEMO_EXE ArgsParserDemo)
-    add_executable(${DEMO_EXE} demo/main.cpp)
-    target_link_libraries(${DEMO_EXE} ${LIB_NAME})
+    include(demo/CMakeDemo.cmake)
 endif(BUILD_ARGSPARSER_DEMO)

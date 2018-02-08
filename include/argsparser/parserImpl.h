@@ -34,9 +34,17 @@ namespace ArgsParser
 
         ~ParserImpl();
 
+        /**
+         * This method creates a container with the parameters provided.
+         * 
+         * It is helpful due to the implementation-first logic used to hide the
+         * constructor of the container object.
+         */
         Container* make_container(
             std::string name,
             ArgType type,
+            size_t min_values,
+            size_t max_values,
             std::vector<std::string> identifiers,
             std::string placeholder_text,
             std::string description,
@@ -45,5 +53,12 @@ namespace ArgsParser
             Postprocessor postprocessor,
             Callback callback
         );
+
+        unsigned int current = 0;
+
+        const char* getNext(){
+            // TODO: Implement method to get the next element from the array.
+            current++;
+        };
     };
 }

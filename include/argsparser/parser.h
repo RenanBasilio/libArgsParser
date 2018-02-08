@@ -62,11 +62,14 @@ namespace ArgsParser
             bool register_value_option(
                 std::string name,
                 std::vector<std::string> identifiers,
+                unsigned int min_values,
+                unsigned int max_values,
                 std::string placeholder_text,
                 std::string description,
                 Validator validator,
                 Postprocessor postprocessor
             );
+
 
             /**
              * Calling this method will register the 'h' and 'help' switches under 'help'.
