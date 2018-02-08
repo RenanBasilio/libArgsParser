@@ -51,8 +51,6 @@ namespace ArgsParser
 
             bool hasValidator();
             Validator getValidator();
-            bool hasPostprocessor();
-            Postprocessor getPostprocessor();
             bool hasCallback();
             Callback getCallback();
     };

@@ -56,20 +56,12 @@ namespace ArgsParser
         return container_impl->validator;
     }
 
-    Postprocessor Container::getPostprocessor(){
-        return container_impl->postprocessor;
-    }
-
     Callback Container::getCallback(){
         return container_impl->callback;
     }
 
     bool Container::hasValidator(){
         return (container_impl->validator != nullptr);
-    }
-
-    bool Container::hasPostprocessor(){
-        return (container_impl->postprocessor != nullptr);
     }
 
     bool Container::hasCallback(){

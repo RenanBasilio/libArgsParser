@@ -12,7 +12,8 @@ target_link_libraries(${TEST_EXE} ${LIB_NAME})
 
 add_test( ParserRuns ${TEST_EXE} "")
 
-add_regex_test( RegistrationSucceeds "" "REGTEST Registration successful for name \"test\".")
+add_regex_test( RegistrationSucceeds "" "REG_TEST Registration successful for name \"test\".")
+add_regex_test( QuickRegistrationSucceeds "" "QREG_TEST Registration successful for name \"nmid\".")
 add_regex_test( DuplicateRegistrationFails "" "DUPREG_TEST_1 Registration Error: Name \"test\" is already registered.")
 add_regex_test( DuplicateRegistrationFails2 "" "DUPREG_TEST_2 Registration Error: Identifier "-t" is already registered.")
 add_regex_test( InvalidRegistrationFails "" "INVREG_TEST_1 Registration Error: Invalid character \'!\'")

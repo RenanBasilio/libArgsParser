@@ -30,17 +30,6 @@ namespace ArgsParser
     typedef bool (*Validator) (const std::string);
 
     /**
-     * This is the declaration of a post-processor function.
-     * 
-     * Post-processor functions must always take a string (the string parsed for
-     * the option by the parser) and can take a pointer to anything (for any
-     * case where a return value may be needed).
-     * This function will be called after validation if the parsed value validates
-     * successfully.
-     */
-    typedef void (*Postprocessor) (const std::string, const void *);
-
-    /**
      * This is the declaration of a callback function. 
      * 
      * Callback methods do not take any arguments and must not return anything. 

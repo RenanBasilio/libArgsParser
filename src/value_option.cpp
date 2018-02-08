@@ -2,7 +2,7 @@
  * parameter_option.cpp
  * 
  * This file contains the implementation of the methods for registering
- * and handling parameter options to the argument parser.
+ * and handling value options.
  * 
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
@@ -15,14 +15,13 @@ namespace ArgsParser
     bool Parser::register_value_option(
         std::string name,
         std::vector<std::string> identifiers,
-        unsigned int min_values,
-        unsigned int max_values,
         std::string placeholder_text,
         std::string description,
+        unsigned int min_values,
+        unsigned int max_values,
         Validator validator,
-        Postprocessor postprocessor
-    )
-    {
+        Callback callback
+    ) {
         try{
             // First check if all identifiers are open to be registered.
             if(isRegistered(name)) 
@@ -47,7 +46,6 @@ namespace ArgsParser
                 description, 
                 parser_impl->validation_always_critical,
                 validator,
-                postprocessor,
                 nullptr);
 
             // And register it with the identifiers provided.
@@ -71,5 +69,63 @@ namespace ArgsParser
             return false;
         }
         
-    }
+    };
+
+    bool Parser::register_value_option(
+        std::string name,
+        std::vector<std::string> identifiers,
+        Validator validator,
+        Callback callback
+    ) {
+        return register_value_option(
+            name,
+            identifiers,
+            "value",
+            "",
+            1,
+            1,
+            validator,
+            callback
+        );
+    };
+
+    bool Parser::register_value_option(
+        std::string name,
+        std::vector<std::string> identifiers,
+        unsigned int max_values,
+        unsigned int min_values,
+        Validator validator,
+        Callback callback
+    ) {
+        return register_value_option(
+            name,
+            identifiers,
+            "value",
+            "",
+            max_values,
+            min_values,
+            validator,
+            callback
+        );
+    };
+
+    bool Parser::register_value_option(
+        std::string name,
+        std::vector<std::string> identifiers,
+        std::string placeholder_text,
+        std::string description,
+        Validator validator,
+        Callback callback
+    ) {
+        return register_value_option(
+            name,
+            identifiers,
+            placeholder_text,
+            description,
+            1,
+            1,
+            validator,
+            callback
+        );
+    };
 }
