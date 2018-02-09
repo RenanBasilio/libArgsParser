@@ -13,37 +13,37 @@
 namespace ArgsParser
 {
     bool Parser::register_value_option(
-        std::string name,
+        const std::string &name,
         std::vector<std::string> identifiers,
-        std::string placeholder_text,
-        std::string description,
-        unsigned int min_values,
-        unsigned int max_values,
-        Validator validator,
-        Callback callback
+        const std::string &placeholder_text,
+        const std::string &description,
+        const unsigned int max_values,
+        const unsigned int min_values,
+        const Validator validator,
+        const Callback callback
     ) {
         try{
             // First check if all identifiers are open to be registered.
             if(isRegistered(name)) 
-                throw std::runtime_error( "Name \"" + name + "\" is already registered." );
+                throw std::runtime_error( "Name \"" + std::string(name) + "\" is already registered." );
 
             for(size_t i = 0; i < identifiers.size(); i++)
             {
                 identifiers[i] = parser_impl->make_identifier(identifiers[i]);
                 if(isRegistered(identifiers[i]))
-                    throw std::runtime_error( "Identifier \"" + identifiers[i] + "\" is already registered." );
+                    throw std::runtime_error( "Identifier \"" + std::string(identifiers[i]) + "\" is already registered." );
             }
         
             // If check was successful, create a new container object.
 
             Container* item = parser_impl->make_container(
-                name,
+                name.c_str(),
                 ArgType::Value,
                 min_values,
                 max_values,
-                identifiers, 
-                placeholder_text, 
-                description, 
+                identifiers,
+                placeholder_text.c_str(), 
+                description.c_str(), 
                 parser_impl->validation_always_critical,
                 validator,
                 nullptr);
@@ -72,8 +72,8 @@ namespace ArgsParser
     };
 
     bool Parser::register_value_option(
-        std::string name,
-        std::vector<std::string> identifiers,
+        const std::string &name,
+        const std::vector<std::string> &identifiers,
         Validator validator,
         Callback callback
     ) {
@@ -90,8 +90,8 @@ namespace ArgsParser
     };
 
     bool Parser::register_value_option(
-        std::string name,
-        std::vector<std::string> identifiers,
+        const std::string &name,
+        const std::vector<std::string> &identifiers,
         unsigned int max_values,
         unsigned int min_values,
         Validator validator,
@@ -110,10 +110,10 @@ namespace ArgsParser
     };
 
     bool Parser::register_value_option(
-        std::string name,
-        std::vector<std::string> identifiers,
-        std::string placeholder_text,
-        std::string description,
+        const std::string &name,
+        const std::vector<std::string> &identifiers,
+        const std::string &placeholder_text,
+        const std::string &description,
         Validator validator,
         Callback callback
     ) {

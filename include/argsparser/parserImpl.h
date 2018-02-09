@@ -49,13 +49,13 @@ namespace ArgsParser
          * constructor of the container object.
          */
         Container* make_container(
-            std::string name,
+            const char* name,
             ArgType type,
             size_t min_values,
             size_t max_values,
-            std::vector<std::string> identifiers,
-            std::string placeholder_text,
-            std::string description,
+            const std::vector<std::string> &identifiers,
+            const char* placeholder_text,
+            const char* description,
             bool validation_critical,
             Validator validator,
             Callback callback

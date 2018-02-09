@@ -26,6 +26,9 @@ namespace ArgsParser
         public:
             Parser();
             Parser(bool autohelp, bool errors_critical = false, bool validation_critical = false);
+            Parser(const Parser &parser);
+            Parser& operator=(Parser other);
+            
             ~Parser();
 
             const std::string& error_description;
@@ -72,36 +75,36 @@ namespace ArgsParser
              * from the command line.
              */
             bool register_value_option(
-                std::string name,
+                const std::string &name,
                 std::vector<std::string> identifiers,
-                std::string placeholder_text,
-                std::string description,
-                unsigned int max_values,
-                unsigned int min_values = 1,
-                Validator validator = nullptr,
-                Callback callback = nullptr
+                const std::string &placeholder_text,
+                const std::string &description,
+                const unsigned int max_values,
+                const unsigned int min_values = 1,
+                const Validator validator = nullptr,
+                const Callback callback = nullptr
             );
             bool register_value_option(
-                std::string name,
-                std::vector<std::string> identifiers,
-                Validator validator = nullptr,
-                Callback callback = nullptr
+                const std::string &name,
+                const std::vector<std::string> &identifiers,
+                const Validator validator = nullptr,
+                const Callback callback = nullptr
             );
             bool register_value_option(
-                std::string name,
-                std::vector<std::string> identifiers,
-                unsigned int max_values,
-                unsigned int min_values = 1,
-                Validator validator = nullptr,
-                Callback callback = nullptr
+                const std::string &name,
+                const std::vector<std::string> &identifiers,
+                const unsigned int max_values,
+                const unsigned int min_values = 1,
+                const Validator validator = nullptr,
+                const Callback callback = nullptr
             );
             bool register_value_option(
-                std::string name,
-                std::vector<std::string> identifiers,
-                std::string placeholder_text,
-                std::string description,
-                Validator validator = nullptr,
-                Callback callback = nullptr
+                const std::string &name,
+                const std::vector<std::string> &identifiers,
+                const std::string &placeholder_text,
+                const std::string &description,
+                const Validator validator = nullptr,
+                const Callback callback = nullptr
             );
 
             /**

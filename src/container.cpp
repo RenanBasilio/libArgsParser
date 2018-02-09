@@ -19,24 +19,24 @@ namespace ArgsParser
         container_impl = nullptr;
     }
 
-    const char* Container::getName(){
-        return container_impl->name;
+    const std::string Container::getName(){
+        return std::string(container_impl->name);
     }
 
     const ArgType Container::getType(){
         return container_impl->option_type;
     }
 
-    std::vector<std::string> Container::getIdentifiers(){
+    const std::vector<std::string> Container::getIdentifiers(){
         return container_impl->identifiers;
     }
 
-    const char* Container::getPlaceholderText(){
-        return container_impl->placeholder;
+    const std::string Container::getPlaceholderText(){
+        return std::string(container_impl->placeholder);
     }
 
-    const char* Container::getDescription(){
-        return container_impl->desc;
+    const std::string Container::getDescription(){
+        return std::string(container_impl->desc);
     }
 
     std::pair<bool, std::string> Container::getValue(){

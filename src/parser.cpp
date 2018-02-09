@@ -27,6 +27,30 @@ namespace ArgsParser
         if(errors_critical) parser_impl->errors_critical = true;
     }
 
+    Parser::Parser(const Parser &parser):
+        parser_impl(new ParserImpl()),
+        error_description(parser_impl->error_description)
+    {
+        if(parser.parser_impl->autohelp_enabled) enable_autohelp();
+        if(parser.parser_impl->validation_always_critical) 
+            parser_impl->validation_always_critical = true;
+        if(parser.parser_impl->errors_critical) parser_impl->errors_critical = true;
+        parser_impl->error_description = parser.parser_impl->error_description;
+        parser_impl->current = parser.parser_impl->current;
+        parser_impl->program_name = parser.parser_impl->program_name;
+        parser_impl->registered_symbols = parser.parser_impl->registered_symbols;
+
+    }
+
+    Parser& Parser::operator=(Parser other){
+        // Check for self-assignment.
+        if (&other == this) return *this;
+        
+        // Reuse the implementation so both interfaces share the same internals.
+        parser_impl = other.parser_impl;
+        return *this;
+    }
+
     Parser::~Parser(){
         delete parser_impl;
         parser_impl = nullptr;
@@ -72,10 +96,10 @@ namespace ArgsParser
         for (it = registered_symbols.begin(); it != registered_symbols.end(); ++it){
             if(it->first.at(0) == '&') {
                 // Check if this key is its name.
-                const char* name = it->second->getName();
+                const std::string name = it->second->getName();
                 if( name == it->first.c_str()){
                     // Get list of registered identifiers from the container.
-                    std::vector<std::string> identifiers = it->second->getIdentifiers();
+                    const std::vector<std::string> identifiers = it->second->getIdentifiers();
 
                     // For each identifier, if it's not the same as the name, set
                     // it to a nullptr. This guarantees we wont be running into any
@@ -95,13 +119,13 @@ namespace ArgsParser
     };
 
     Container* Parser::ParserImpl::make_container(
-        std::string name,
+        const char* name,
         ArgType type,
         size_t min_values,
         size_t max_values,
-        std::vector<std::string> identifiers,
-        std::string placeholder_text,
-        std::string description,
+        const std::vector<std::string> &identifiers,
+        const char* placeholder_text,
+        const char* description,
         bool validation_critical,
         Validator validator,
         Callback callback
@@ -124,7 +148,8 @@ namespace ArgsParser
         return interface;
     };
 
-    std::string Parser::ParserImpl::make_identifier(const std::string string){
+    std::string Parser::ParserImpl::make_identifier(std::string string){
+
         // First check if this is a valid string.
         const size_t invalid_char = string.find_first_not_of("-AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz");
         if(invalid_char != std::string::npos) {
@@ -134,28 +159,23 @@ namespace ArgsParser
         if(string.size() > 0 && string.at(string.size()-1) == '-'){
             throw std::runtime_error( "Identifier must not end in a dash.");
         }
-        // Next, check if string is correctly prefixed. If not, add prefix dashes.
-        std::string idString;
 
+        // Next, check if string is correctly prefixed. If not, add prefix dashes.
         // If string is 1 character long, prefix a dash to it.
-        if (string.size() == 1) idString = "-" + string;
+        if (string.size() == 1) string.insert(string.begin(), '-');
         // Otherwise, get how many prefix '-' characters it has and add enough to make two.
         else {
             const size_t first_char = string.find_first_not_of("-");
-            std::string identifier = string.substr(first_char);
-            idString = identifier.size() == 1? ("-" + identifier) : ("--" + identifier);
+
+            // If first character is the third character in the string, return.
+            // Otherwise, fix the prefix.
+            if( (string.size() != 2 && string.at(0) != '-') || first_char != 2)
+            {
+                std::string identifier = string.substr(first_char);
+                string = identifier.size() == 1? ("-" + identifier) : ("--" + identifier);
+            }
         }
 
-        switch (string.size())
-        {
-            
-            case 1:
-                idString = "-" + string;
-            
-            default:
-                break;
-        }
-        
-        return idString;
+        return string;
     };
 }
