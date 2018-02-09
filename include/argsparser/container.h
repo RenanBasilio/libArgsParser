@@ -27,13 +27,13 @@ namespace ArgsParser
 
     class Container{
         public:
-            const char* getName();
-            const char* getPlaceholderText();
-            const char* getDescription();
+            const std::string getName();
+            const std::string getPlaceholderText();
+            const std::string getDescription();
 
             const ArgType getType();
             
-            std::vector<std::string> getIdentifiers();
+            const std::vector<std::string> getIdentifiers();
 
             // To-Do: Make C++17 version with std::optional support.
             std::pair<bool, std::string> getValue();
@@ -46,7 +46,7 @@ namespace ArgsParser
             
             friend class Parser;
 
-            Container(ContainerImpl* container);
+            explicit Container(ContainerImpl* container);
             ~Container();
 
             bool hasValidator();

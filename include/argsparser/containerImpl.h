@@ -50,28 +50,27 @@ namespace ArgsParser
          * Constructor for the Container structure.
          */
         // This constructor is used when a validator and postprocessor type function is provided.
-        ContainerImpl(std::string name,
+        ContainerImpl(const char* &name,
             ArgsParser::ArgType type,
             size_t min_values,
             size_t max_values,
-            std::vector<std::string> identifiers,
-            std::string placeholder, 
-            std::string desc,
+            const std::vector<std::string> &identifiers,
+            const char* &placeholder, 
+            const char* &desc,
             bool validation_critical,
             Validator validator,
             Callback callback) :
-            name(name.c_str()),
+            name(name),
             option_type(type),
             min_values(min_values),
             max_values(max_values),
             identifiers(identifiers),
-            placeholder(placeholder.c_str()),
-            desc(desc.c_str()),
+            placeholder(placeholder),
+            desc(desc),
             validator(validator),
             validation_critical(validation_critical),
             callback(callback)
             {
-                value = std::vector<std::string>();
             }
     };
 }
