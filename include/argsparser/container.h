@@ -35,7 +35,9 @@ namespace ArgsParser
             
             const std::vector<std::string> getIdentifiers();
 
-            // To-Do: Make C++17 version with std::optional support.
+            bool isActive();
+
+            // TODO: Make C++17 version with std::optional support.
             std::pair<bool, std::string> getValue();
             std::pair<bool, std::vector<std::string>> getValues();
             std::pair<bool, std::string> getValidation();
