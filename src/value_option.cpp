@@ -20,6 +20,7 @@ namespace ArgsParser
         const unsigned int max_values,
         const unsigned int min_values,
         const Validator validator,
+        const Callback error_callback,
         const Callback callback
     ) {
         try{
@@ -46,7 +47,8 @@ namespace ArgsParser
                 description.c_str(), 
                 parser_impl->validation_always_critical,
                 validator,
-                nullptr);
+                error_callback,
+                callback);
 
             // And register it with the identifiers provided.
 
@@ -75,6 +77,7 @@ namespace ArgsParser
         const std::string &name,
         const std::vector<std::string> &identifiers,
         Validator validator,
+        Callback error_callback,
         Callback callback
     ) {
         return register_value_option(
@@ -85,6 +88,7 @@ namespace ArgsParser
             1,
             1,
             validator,
+            error_callback,
             callback
         );
     };
@@ -95,6 +99,7 @@ namespace ArgsParser
         unsigned int max_values,
         unsigned int min_values,
         Validator validator,
+        Callback error_callback,
         Callback callback
     ) {
         return register_value_option(
@@ -105,6 +110,7 @@ namespace ArgsParser
             max_values,
             min_values,
             validator,
+            error_callback,
             callback
         );
     };
@@ -115,6 +121,7 @@ namespace ArgsParser
         const std::string &placeholder_text,
         const std::string &description,
         Validator validator,
+        Callback error_callback,
         Callback callback
     ) {
         return register_value_option(
@@ -125,6 +132,7 @@ namespace ArgsParser
             1,
             1,
             validator,
+            error_callback,
             callback
         );
     };

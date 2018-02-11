@@ -37,23 +37,48 @@ namespace ArgsParser
 
             /**
              * This method register a positional argument to the parser. Usage example:
-             *      ArgsParser.register_positional("file", "filename", )
+             *      ArgsParser.register_positional(
+             *          "file", "filename", &file_exists, &show_error, &callback);
+             * 
+             * The above line will enable parsing the following lines:
+             *      myapp example.txt
+             * The parser will then call file_exists(example.txt) and if true then callback(),
+             * otherwise show_error().
+             * 
+             * It will generate the following help text:
+             *      usage: myapp [<filename>]
+             * 
+             * Positionals are parsed in the order they are registered.
+             * 
+             * The method returns true if the option was registered successfully. Otherwise
+             * it returns false and sets the "error_description" variable to a description of the
+             * error.
+             * 
+             * @param {std::string} name The name of the positional.
+             * @param {std::string} placeholder_text The text to show in a help message to describe the positional.
+             * @param {Validator} validator The method to use to validate the user input string.
+             * @param {Callback} error_callback A method to call in case validation fails.
+             * @param {Callback} callback A method to call in case validation succeeds.
+             * @return {bool} Whether the registration of the parameter succeeded.
              */
             bool register_positional(
                 std::string name,
                 std::string placeholder_text,
                 Validator validator = nullptr,
+                Callback error_callback = nullptr,
                 Callback callback = nullptr
             );
 
             /**
              * This method registers an input value option to the parser. Usage example:
              *      ArgsParser.register_option(
-             *          "file", {"f", "file"}, "filename", "The file to open", &file_exists, );
+             *          "file", {"f", "file"}, "filename", "The file to open", &file_exists, &show_error, &callback);
              * 
              * The above line will enable parsing the following lines:
-             *      myprogram -f example.txt
-             *      myprogram --file example.txt
+             *      myapp -f example.txt
+             *      myapp --file example.txt
+             * The parser will then call file_exists(example.txt) and if true then callback(), otherwise
+             * then show_error().
              * 
              * And generate the following help text:
              *      -f, --file <filename>      The file to open.
@@ -66,13 +91,10 @@ namespace ArgsParser
              * @param {std::vector<std::string>} identifiers The identifiers to register for this option
              * @param {std::string} placeholder_text The text that will be displayed within <> in the help text.
              * @param {std::string} description The description of the option that will be displayed in the help text.
-             * @param {pFunc} validator A function to check if the parameter provided with the option is valid.
-             * @param {pFunc} callback A function to be called if the parameter option is passed.
+             * @param {Validator} validator A function to check if the parameter provided with the option is valid.
+             * @param {Callback} error_callback A function to call if validation fails.
+             * @param {Callback} callback A function to be called if validation succeeds.
              * @return {bool} Whether the registration of the parameter succeeded.
-             * 
-             * Note: Setting both identifiers to empty strings will cause the registration to fail as
-             * they cannot be changed later and are required to be able to parse anything
-             * from the command line.
              */
             bool register_value_option(
                 const std::string &name,
@@ -82,12 +104,14 @@ namespace ArgsParser
                 const unsigned int max_values,
                 const unsigned int min_values = 1,
                 const Validator validator = nullptr,
+                const Callback error_callback = nullptr,
                 const Callback callback = nullptr
             );
             bool register_value_option(
                 const std::string &name,
                 const std::vector<std::string> &identifiers,
                 const Validator validator = nullptr,
+                const Callback error_callback = nullptr,
                 const Callback callback = nullptr
             );
             bool register_value_option(
@@ -96,6 +120,7 @@ namespace ArgsParser
                 const unsigned int max_values,
                 const unsigned int min_values = 1,
                 const Validator validator = nullptr,
+                const Callback error_callback = nullptr,
                 const Callback callback = nullptr
             );
             bool register_value_option(
@@ -104,6 +129,7 @@ namespace ArgsParser
                 const std::string &placeholder_text,
                 const std::string &description,
                 const Validator validator = nullptr,
+                const Callback error_callback = nullptr,
                 const Callback callback = nullptr
             );
 

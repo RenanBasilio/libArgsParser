@@ -58,6 +58,7 @@ namespace ArgsParser
             const char* description,
             bool validation_critical,
             Validator validator,
+            Callback error_callback,
             Callback callback
         );
 

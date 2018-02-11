@@ -28,8 +28,10 @@ namespace ArgsParser
         const bool validation_critical;
         // The function to be used to validate the option
         const Validator validator;
-        // The function to be used as a callback method if the option is passed
+        // The function to be used as a callback method if validation succeeds.
         const Callback callback;
+        // The function to be used as a callback method if validation fails.
+        const Callback error_callback;
         
         /* The following parameters are set during parsing and validation. */
 
@@ -50,7 +52,8 @@ namespace ArgsParser
          * Constructor for the Container structure.
          */
         // This constructor is used when a validator and postprocessor type function is provided.
-        ContainerImpl(const char* &name,
+        ContainerImpl(
+            const char* &name,
             ArgsParser::ArgType type,
             size_t min_values,
             size_t max_values,
@@ -59,6 +62,7 @@ namespace ArgsParser
             const char* &desc,
             bool validation_critical,
             Validator validator,
+            Callback error_callback,
             Callback callback) :
             name(name),
             option_type(type),
@@ -69,7 +73,8 @@ namespace ArgsParser
             desc(desc),
             validator(validator),
             validation_critical(validation_critical),
-            callback(callback)
+            callback(callback),
+            error_callback(error_callback)
             {
             }
     };
