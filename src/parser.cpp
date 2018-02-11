@@ -128,6 +128,7 @@ namespace ArgsParser
         const char* description,
         bool validation_critical,
         Validator validator,
+        Callback error_callback,
         Callback callback
     )
     {
@@ -141,6 +142,7 @@ namespace ArgsParser
             description, 
             validation_critical,
             validator,
+            error_callback,
             callback);
 
         Container* interface = new Container(backend);
