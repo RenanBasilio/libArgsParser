@@ -18,12 +18,11 @@ namespace ArgsParser
         error_description(parser_impl->error_description)
         { }
 
-    Parser::Parser(bool autohelp, bool errors_critical, bool validation_critical):
+    Parser::Parser(bool autohelp, bool errors_critical):
         parser_impl(new ParserImpl()),
         error_description(parser_impl->error_description)
     {
         if(autohelp) enable_autohelp();
-        if(validation_critical) parser_impl->validation_always_critical = true;
         if(errors_critical) parser_impl->errors_critical = true;
     }
 
@@ -32,8 +31,6 @@ namespace ArgsParser
         error_description(parser_impl->error_description)
     {
         if(parser.parser_impl->autohelp_enabled) enable_autohelp();
-        if(parser.parser_impl->validation_always_critical) 
-            parser_impl->validation_always_critical = true;
         if(parser.parser_impl->errors_critical) parser_impl->errors_critical = true;
         parser_impl->error_description = parser.parser_impl->error_description;
         parser_impl->current = parser.parser_impl->current;
@@ -81,8 +78,7 @@ namespace ArgsParser
 
    Parser::ParserImpl::ParserImpl() :
         error_description(""),
-        autohelp_enabled(false),
-        validation_always_critical(false)
+        autohelp_enabled(false)
         { };
 
     Parser::ParserImpl::~ParserImpl(){
@@ -126,7 +122,6 @@ namespace ArgsParser
         const std::vector<std::string> &identifiers,
         const char* placeholder_text,
         const char* description,
-        bool validation_critical,
         Validator validator,
         Callback error_callback,
         Callback callback
@@ -140,7 +135,6 @@ namespace ArgsParser
             identifiers,
             placeholder_text,
             description, 
-            validation_critical,
             validator,
             error_callback,
             callback);
