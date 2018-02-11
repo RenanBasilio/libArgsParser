@@ -25,7 +25,7 @@ namespace ArgsParser
 
         public:
             Parser();
-            Parser(bool autohelp, bool errors_critical = false, bool validation_critical = false);
+            Parser(bool autohelp, bool errors_critical = false);
             Parser(const Parser &parser);
             Parser& operator=(Parser other);
             
@@ -62,8 +62,14 @@ namespace ArgsParser
              * @return {bool} Whether the registration of the parameter succeeded.
              */
             bool register_positional(
-                std::string name,
-                std::string placeholder_text,
+                const std::string &name,
+                const std::string &placeholder_text,
+                const Validator validator = nullptr,
+                const Callback error_callback = nullptr,
+                const Callback callback = nullptr
+            );
+            bool register_positional(
+                const std::string &name,
                 Validator validator = nullptr,
                 Callback error_callback = nullptr,
                 Callback callback = nullptr

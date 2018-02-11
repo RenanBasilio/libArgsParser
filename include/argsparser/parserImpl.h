@@ -24,9 +24,7 @@ namespace ArgsParser
         // considered critical and throw unhandled exceptions.
         bool errors_critical = false;
 
-        // This internal boolean stores whether validation failures should
-        // throw unhandled exceptions by default.
-        bool validation_always_critical = false;
+        int positionals_registered = 0;
 
         /** 
          * This map stores key value pairs for quick retrieval of arguments by their identifier or name through
@@ -56,7 +54,6 @@ namespace ArgsParser
             const std::vector<std::string> &identifiers,
             const char* placeholder_text,
             const char* description,
-            bool validation_critical,
             Validator validator,
             Callback error_callback,
             Callback callback

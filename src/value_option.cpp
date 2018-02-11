@@ -44,8 +44,7 @@ namespace ArgsParser
                 max_values,
                 identifiers,
                 placeholder_text.c_str(), 
-                description.c_str(), 
-                parser_impl->validation_always_critical,
+                description.c_str(),
                 validator,
                 error_callback,
                 callback);
@@ -65,8 +64,6 @@ namespace ArgsParser
             return true;
         }
         catch (const std::exception& e) {
-            if(parser_impl->errors_critical) throw;
-            
             parser_impl->error_description = std::string("Registration Error: ") + e.what();
             return false;
         }

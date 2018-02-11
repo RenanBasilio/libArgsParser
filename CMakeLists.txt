@@ -27,6 +27,7 @@ set(
     src/autohelp.cpp
     src/container.cpp
     src/parser.cpp
+    src/positional_option.cpp
     src/value_option.cpp
 )
 

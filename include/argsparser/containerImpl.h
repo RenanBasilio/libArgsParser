@@ -24,8 +24,6 @@ namespace ArgsParser
         const char* placeholder;
         // The description to display when generating help text
         const char* desc;
-        // Whether an exception or failure from the validator should be considered a critical failure
-        const bool validation_critical;
         // The function to be used to validate the option
         const Validator validator;
         // The function to be used as a callback method if validation succeeds.
@@ -60,7 +58,6 @@ namespace ArgsParser
             const std::vector<std::string> &identifiers,
             const char* &placeholder, 
             const char* &desc,
-            bool validation_critical,
             Validator validator,
             Callback error_callback,
             Callback callback) :
@@ -72,7 +69,6 @@ namespace ArgsParser
             placeholder(placeholder),
             desc(desc),
             validator(validator),
-            validation_critical(validation_critical),
             callback(callback),
             error_callback(error_callback)
             {
