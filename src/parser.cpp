@@ -8,43 +8,44 @@
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
 
+#include <limits>
 #include <argsparser/parserImpl.h>
-#include <argsparser/containerImpl.h>
+#include <argsparser/container.h>
+#include <argsparser/util.h>
 
 namespace ArgsParser
 {
     Parser::Parser():
         parser_impl(new ParserImpl()),
-        error_description(parser_impl->error_description)
+        error_description(parser_impl->error_description),
+        errors_critical(false)
         { }
 
     Parser::Parser(bool autohelp, bool errors_critical):
         parser_impl(new ParserImpl()),
-        error_description(parser_impl->error_description)
+        error_description(parser_impl->error_description),
+        errors_critical(errors_critical)
     {
         if(autohelp) enable_autohelp();
-        if(errors_critical) parser_impl->errors_critical = true;
     }
 
-    Parser::Parser(const Parser &parser):
-        parser_impl(new ParserImpl()),
-        error_description(parser_impl->error_description)
-    {
-        if(parser.parser_impl->autohelp_enabled) enable_autohelp();
-        if(parser.parser_impl->errors_critical) parser_impl->errors_critical = true;
-        parser_impl->error_description = parser.parser_impl->error_description;
-        parser_impl->current = parser.parser_impl->current;
-        parser_impl->program_name = parser.parser_impl->program_name;
-        parser_impl->registered_symbols = parser.parser_impl->registered_symbols;
+    Parser::Parser(const Parser& other):
+        parser_impl(new ParserImpl(*other.parser_impl)),
+        error_description(parser_impl->error_description),
+        errors_critical(other.errors_critical)
+    { 
+    }
 
+    Parser::Parser(Parser&& other):
+        Parser()
+    {
+        swap(*this, other);
     }
 
     Parser& Parser::operator=(Parser other){
-        // Check for self-assignment.
-        if (&other == this) return *this;
-        
-        // Reuse the implementation so both interfaces share the same internals.
-        parser_impl = other.parser_impl;
+
+        swap(*this, other);
+
         return *this;
     }
 
@@ -53,8 +54,26 @@ namespace ArgsParser
         parser_impl = nullptr;
     }
 
-    bool Parser::isRegistered(std::string identifier){
-        return (parser_impl->registered_symbols.count(identifier) == 0 ? false : true);
+    void swap(Parser& first, Parser& second){
+        using std::swap;
+
+        swap(first.parser_impl, second.parser_impl);
+    }
+
+    bool Parser::isRegistered(const std::string& symbol){
+        return (isNameRegistered(symbol) || isIdentifierRegistered(symbol));
+    }
+
+    bool Parser::isNameRegistered(const std::string& name){
+        return parser_impl->names.count(name) > 0;
+    }
+
+    bool Parser::isIdentifierRegistered(const std::string& identifier){
+        // First check if this is a proper identifier. If not, make one.
+        const std::string identifier_ = 
+            (check_identifier(identifier)? identifier : make_identifier(identifier));
+
+        return parser_impl->identifiers.count(identifier_) > 0;
     }
 
     bool Parser::enable_autohelp(){
@@ -63,12 +82,13 @@ namespace ArgsParser
             // As there is a distinct possibility of this method being the first
             // to register anything, we can speed up this test by checking if
             // nothing has been registered yet.
-            if (parser_impl->registered_symbols.size() == 0 || ( !isRegistered("h") && !isRegistered("help") ))
+            if (parser_impl->names.size() == 0 || 
+               ( !isNameRegistered("help") && !isIdentifierRegistered("-h") && !isIdentifierRegistered("--help")))
             {
                 // To-Do: Register help container.
                 return true;
             }
-            else throw new std::runtime_error("Autohelp failure: A keyword is already registered.");
+            else throw std::runtime_error("Autohelp failure: A keyword is already registered.");
         }
         catch (const std::exception& e){
             parser_impl->error_description = e.what();
@@ -76,102 +96,91 @@ namespace ArgsParser
         }
     }
 
-   Parser::ParserImpl::ParserImpl() :
-        error_description(""),
-        autohelp_enabled(false)
+    bool Parser::check_identifier(const std::string& string){
+
+        // Check for invalid characters.
+        size_t invalid_char = string.find_first_not_of("-AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz");
+        if(invalid_char != std::string::npos) return false;
+
+        // Check if the identifier ends with a dash.
+        if((string.at(string.length()-1)) == '-') return false;
+
+        // Check if the identifier is a short identifier and starts with a dash
+        if((string.length() == 2) && string.at(0) == '-') return true;
+
+        // Check if the identifier is a long identifier prefixed by two dashes
+        if((string.length() > 2) 
+            && string.at(0) == '-' 
+            && string.at(1) == '-'
+            && string.at(2) != '-') return true;
+
+        // If neither check passes, return false.
+        return false;
+    }
+
+    idtoken Parser::register_container(ArgType type, Container* container){
+        // The identifier type allows for up to 6553 options of each type to be
+        // registered. As such, throw an exception if that amount is reached.
+
+        // Register the container
+        size_t index;
+        switch (type)
+        {
+        case ArgType::Positional:
+            if (parser_impl->registered_positionals.size() == (USHRT_MAX / 10))
+                throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
+            index = parser_impl->registered_positionals.size();
+            parser_impl->registered_positionals.push_back(container);
+            break;
+        case ArgType::Option:
+            if (parser_impl->registered_options.size() == (USHRT_MAX / 10))
+                throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
+            index = parser_impl->registered_options.size();
+            parser_impl->registered_options.push_back(container);
+            break;
+        case ArgType::Switch:
+            if (parser_impl->registered_switches.size() == (USHRT_MAX / 10))
+                throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
+            index = parser_impl->registered_switches.size();
+            parser_impl->registered_switches.push_back(container);
+            break;
+        default:
+            return null_token;
+        }
+
+        // Calculate the id of the container.
+        // The last digit of the container is the type (ArgType), while
+        // the remaining digits are the index in the container.
+        idtoken id = static_cast<idtoken>(( index * 10 ) + ArgType::Positional);
+        std::pair<ArgType, idtoken> token_pair = std::make_pair(type, id);
+
+        // Add the id to the map of names.
+        parser_impl->names[container->getName()] = token_pair;
+        std::vector<std::string> identifiers = container->getIdentifiers();
+        for( size_t i = 0; i < identifiers.size(); i++){
+            parser_impl->identifiers[identifiers[i]] = token_pair;
+        }
+
+        return id;
+    }
+
+    void Parser::set_error(const std::string& error_string){
+        parser_impl->error_description = error_string;
+    }
+
+    Parser::ParserImpl::ParserImpl() :
+        error_description("")
         { };
 
     Parser::ParserImpl::~ParserImpl(){
-        // Iterate through the map, destroying any objects the first time
-        // they are found. This produces some processing overhead, but
-        // considering it's the final deletion operation for a class that
-        // gets instantiated at most once it is not as troublesome as the
-        // memory overhead of keeping a reference to each name.
-
-        std::unordered_map<std::string, Container*>::iterator it;
-        for (it = registered_symbols.begin(); it != registered_symbols.end(); ++it){
-            if(it->first.at(0) == '&') {
-                // Check if this key is its name.
-                const std::string name = it->second->getName();
-                if( name == it->first.c_str()){
-                    // Get list of registered identifiers from the container.
-                    const std::vector<std::string> identifiers = it->second->getIdentifiers();
-
-                    // For each identifier, if it's not the same as the name, set
-                    // it to a nullptr. This guarantees we wont be running into any
-                    // dangling references through the rest of the deletion process.
-                    for(size_t i = 0; i < identifiers.size(); i++){
-                        if(identifiers[i] != name)
-                            registered_symbols[identifiers[i]] = nullptr;
-                    };
-
-                    // Finally, delete the last reference to it (the name).
-                    delete registered_symbols[name];
-                    registered_symbols[name] = nullptr;
-                }
-            }
-            else it->second = nullptr;
-        }
-    };
-
-    Container* Parser::ParserImpl::make_container(
-        const char* name,
-        ArgType type,
-        size_t min_values,
-        size_t max_values,
-        const std::vector<std::string> &identifiers,
-        const char* placeholder_text,
-        const char* description,
-        Validator validator,
-        Callback error_callback,
-        Callback callback
-    )
-    {
-        Container::ContainerImpl* backend = new Container::ContainerImpl(
-            name,
-            type,
-            min_values,
-            max_values,
-            identifiers,
-            placeholder_text,
-            description, 
-            validator,
-            error_callback,
-            callback);
-
-        Container* interface = new Container(backend);
-
-        return interface;
-    };
-
-    std::string Parser::ParserImpl::make_identifier(std::string string){
-
-        // First check if this is a valid string.
-        const size_t invalid_char = string.find_first_not_of("-AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz");
-        if(invalid_char != std::string::npos) {
-            throw std::runtime_error( std::string("Invalid character '") + string.at(invalid_char) + std::string("'") );
-        }
-        // Then check if the string contains at least one letter (and does not end in a dash)
-        if(string.size() > 0 && string.at(string.size()-1) == '-'){
-            throw std::runtime_error( "Identifier must not end in a dash.");
-        }
-
-        // Next, check if string is correctly prefixed. If not, add prefix dashes.
-        // If string is 1 character long, prefix a dash to it.
-        if (string.size() == 1) string.insert(string.begin(), '-');
-        // Otherwise, get how many prefix '-' characters it has and add enough to make two.
-        else {
-            const size_t first_char = string.find_first_not_of("-");
-
-            // If first character is the third character in the string, return.
-            // Otherwise, fix the prefix.
-            if( (string.size() != 2 && string.at(0) != '-') || first_char != 2)
-            {
-                std::string identifier = string.substr(first_char);
-                string = identifier.size() == 1? ("-" + identifier) : ("--" + identifier);
-            }
-        }
-
-        return string;
+        // Iterates through the registries, deleting containers as they appear.
+        for (size_t i = 0; i < registered_options.size(); i++)
+        {
+            delete registered_options[i];
+        };
+        for (size_t i = 0; i < registered_positionals.size(); i++)
+        {
+            delete registered_positionals[i];
+        };
     };
 }

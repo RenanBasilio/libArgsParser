@@ -17,7 +17,7 @@ cmake_minimum_required(VERSION 3.9)
 project(argsparser DESCRIPTION "A simple C++ command line argument parser.")
 include(GNUInstallDirs)
 enable_language(CXX)
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 
 # Instructions to build static library
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -27,8 +27,7 @@ set(
     src/autohelp.cpp
     src/container.cpp
     src/parser.cpp
-    src/positional_option.cpp
-    src/value_option.cpp
+    src/util.cpp
 )
 
 set(
@@ -38,11 +37,11 @@ set(
     include/argsparser/common.h
     include/argsparser/container.h
     include/argsparser/parser.h
+    include/argsparser/util.h
 )
 
 set(
     PRIVATE_HEADER_FILES
-    include/argsparser/containerImpl.h
     include/argsparser/parserImpl.h
 )
 

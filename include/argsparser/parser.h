@@ -20,25 +20,70 @@ namespace ArgsParser
      */
     class Parser{
         private:
+            // Whether errors should throw unhandled exceptions.
+            bool errors_critical;
+
             struct ParserImpl;
             ParserImpl* parser_impl;
+
+            // The following private methods are used to interface with the
+            // implementation class.
+            
+            /**
+             * This method registers a container of a specified type and returns
+             * its id token.
+             * 
+             * @param {ArgType} type The type of option in the container.
+             * @param {Container*} container The container being registered.
+             */
+            idtoken register_container(ArgType type, Container* container);
+
+            /**
+             * This method sets the error description to the message provided.
+             * 
+             * @param {std::string} message The error message.
+             */
+            void set_error(const std::string& message);
 
         public:
             Parser();
             Parser(bool autohelp, bool errors_critical = false);
-            Parser(const Parser &parser);
-            Parser& operator=(Parser other);
-            
+            Parser(const Parser& other);        // Copy constructor.
+            Parser(Parser&& other);             // Move constructor.
+            Parser& operator=(Parser other);    // Assignment operator
             ~Parser();
+
+            friend void swap(Parser& first, Parser& second);
 
             const std::string& error_description;
 
-            bool isRegistered(std::string identifiers);
+            /**
+             * This method returns whetehr a name or identifier is registered to 
+             * the parser.
+             * @param {std::string} symbol The symbol to search for.
+             * @return {bool} True if symbol is registered. False otherwise.
+             */
+            bool isRegistered(const std::string& symbol);
+
+            /**
+             * This method returns whether a name is registered to the parser.
+             * @param {std::string} name The name to search for.
+             * @return {bool} True if name is registered. False otherwise.
+             */
+            bool isNameRegistered(const std::string& name);
+
+            /**
+             * This method returns whether an identifier is registered to the 
+             * parser.
+             * @param {std::string} identifier The identifier to search for.
+             * @return {bool} True if the identifier is registered. False otherwise.
+             */
+            bool isIdentifierRegistered(const std::string& identifier);
 
             /**
              * This method register a positional argument to the parser. Usage example:
              *      ArgsParser.register_positional(
-             *          "file", "filename", &file_exists, &show_error, &callback);
+             *          "file", "filename", file_exists, show_error, callback);
              * 
              * The above line will enable parsing the following lines:
              *      myapp example.txt
@@ -60,25 +105,67 @@ namespace ArgsParser
              * @param {Callback} error_callback A method to call in case validation fails.
              * @param {Callback} callback A method to call in case validation succeeds.
              * @return {bool} Whether the registration of the parameter succeeded.
+             * @except {std::runtime_error} Registration failure.
              */
-            bool register_positional(
-                const std::string &name,
-                const std::string &placeholder_text,
-                const Validator validator = nullptr,
-                const Callback error_callback = nullptr,
-                const Callback callback = nullptr
-            );
-            bool register_positional(
-                const std::string &name,
-                Validator validator = nullptr,
-                Callback error_callback = nullptr,
-                Callback callback = nullptr
-            );
+            template <typename T>
+            idtoken register_positional(
+                const std::string& name,
+                const std::string& placeholder_text,
+                const Validator& validator = nullptr,
+                const Converter<T>& converter = nullptr,
+                const Callback& error_callback = nullptr,
+                const Callback& callback = nullptr
+            ){
+                try{
+                    // First check if name is already registered.
+                    if(isNameRegistered(name))
+                        throw std::runtime_error("Name \"" + name + "\" is already registered.");
+
+                    TypedInputContainer<T>* container = new TypedInputContainer<T>(
+                        name,
+                        std::vector<std::string>(),
+                        "",
+                        placeholder_text,
+                        validator,
+                        converter,
+                        error_callback,
+                        callback
+                    );
+
+                    idtoken id = register_container(ArgType::Positional, container);
+
+                    return id;
+                }
+                catch (const std::exception& e){
+                    std::string error_string = std::string("Registration Error: ") + e.what();
+
+                    if(errors_critical) throw std::runtime_error(error_string);
+                    else set_error(error_string);
+
+                    return null_token;
+                }
+            }
+            idtoken register_positional(
+                const std::string& name,
+                const std::string& placeholder_text,
+                const Validator& validator = nullptr,
+                const Callback& error_callback = nullptr,
+                const Callback& callback = nullptr
+            ){
+                return register_positional<std::string>(
+                    name,
+                    placeholder_text,
+                    validator,
+                    nullptr,
+                    error_callback,
+                    callback
+                );
+            }
 
             /**
              * This method registers an input value option to the parser. Usage example:
-             *      ArgsParser.register_option(
-             *          "file", {"f", "file"}, "filename", "The file to open", &file_exists, &show_error, &callback);
+             *      Parser.register_option(
+             *          "file", {"f", "file"}, "filename", "The file to open", file_exists show_error, callback);
              * 
              * The above line will enable parsing the following lines:
              *      myapp -f example.txt
@@ -101,43 +188,84 @@ namespace ArgsParser
              * @param {Callback} error_callback A function to call if validation fails.
              * @param {Callback} callback A function to be called if validation succeeds.
              * @return {bool} Whether the registration of the parameter succeeded.
+             * @except {std::runtime_error} Registration failure.
              */
-            bool register_value_option(
-                const std::string &name,
-                std::vector<std::string> identifiers,
-                const std::string &placeholder_text,
-                const std::string &description,
-                const unsigned int max_values,
-                const unsigned int min_values = 1,
-                const Validator validator = nullptr,
-                const Callback error_callback = nullptr,
-                const Callback callback = nullptr
-            );
-            bool register_value_option(
-                const std::string &name,
-                const std::vector<std::string> &identifiers,
-                const Validator validator = nullptr,
-                const Callback error_callback = nullptr,
-                const Callback callback = nullptr
-            );
-            bool register_value_option(
-                const std::string &name,
-                const std::vector<std::string> &identifiers,
-                const unsigned int max_values,
-                const unsigned int min_values = 1,
-                const Validator validator = nullptr,
-                const Callback error_callback = nullptr,
-                const Callback callback = nullptr
-            );
-            bool register_value_option(
-                const std::string &name,
-                const std::vector<std::string> &identifiers,
-                const std::string &placeholder_text,
-                const std::string &description,
-                const Validator validator = nullptr,
-                const Callback error_callback = nullptr,
-                const Callback callback = nullptr
-            );
+            template <typename T>
+            idtoken register_value_option(
+                const std::string& name,
+                const std::vector<std::string>& identifiers,
+                const std::string& placeholder_text = "value",
+                const std::string& description = "Description not given.",
+                const size_t max_values = 1,
+                const size_t min_values = 1,
+                const Validator& validator = nullptr,
+                const Converter<T>& converter = nullptr,
+                const Callback& error_callback = nullptr,
+                const Callback& callback = nullptr
+            ){
+                try{
+                    // First check if all identifiers are open to be registered.
+                    if(isNameRegistered(name)) 
+                        throw std::runtime_error( "Name \"" + name + "\" is already registered." );
+
+                    std::vector<std::string> identifiers_(identifiers.size());
+                    for(size_t i = 0; i < identifiers.size(); i++)
+                    {
+                        identifiers_[i] = make_identifier(identifiers[i]);
+                        if(isIdentifierRegistered(identifiers_[i]))
+                            throw std::runtime_error( "Identifier \"" + identifiers_[i] + "\" is already registered." );
+                    }
+                
+                    // If check was successful, create a new container object.
+                    TypedInputContainer<T>* container = new TypedInputContainer<T>(
+                        name,
+                        identifiers_,
+                        description,
+                        placeholder_text,
+                        validator,
+                        converter,
+                        error_callback,
+                        callback
+                    );
+
+                    // And push the container to the array of registered options.
+                    idtoken id = register_container(ArgType::Option, container);
+
+                    return id;
+                }
+                catch (const std::exception& e) {
+                    std::string error_string = std::string("Registration Error: ") + e.what();
+
+                    if(errors_critical) throw std::runtime_error(error_string);
+                    else set_error(error_string);
+
+                    return null_token;
+                }
+            }
+            idtoken register_value_option(
+                const std::string& name,
+                const std::vector<std::string>& identifiers,
+                const std::string& placeholder_text = "value",
+                const std::string& description = "Description not given.",
+                const size_t max_values = 1,
+                const size_t min_values = 1,
+                const Validator& validator = nullptr,
+                const Callback& error_callback = nullptr,
+                const Callback& callback = nullptr
+            ){
+                return register_value_option<std::string>(
+                    name,
+                    identifiers,
+                    placeholder_text,
+                    description,
+                    max_values,
+                    min_values,
+                    validator,
+                    nullptr,
+                    error_callback,
+                    callback
+                );
+            }
 
             /**
              * Calling this method will register the 'h' and 'help' switches under 'help'.
@@ -147,7 +275,20 @@ namespace ArgsParser
              * 
              * Alternatively, if you wish to register your own help provider, register a
              * switch with the method you wish to use as the callback function.
+             * 
+             * @return {bool} Whether autohelp was enabled successfully.
              */
             bool enable_autohelp();
+
+            /**
+             * This method checks if an identifier is valid. That is, if the identifier
+             * is prefixed by the correct amount of dashes and does not contain any
+             * invalid characters. Valid characters are:
+             *      "-AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"
+             * 
+             * @param {std::string} identifier The identifier to check.
+             * @return {bool} Whether the string is a valid identifier.
+             */
+            bool check_identifier(const std::string& identifier);
     };
 }

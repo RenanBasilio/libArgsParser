@@ -6,69 +6,69 @@
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
 
-#include <argsparser/containerImpl.h>
+#include <argsparser/container.h>
+#include <algorithm>
 
 namespace ArgsParser
 {
     Container::Container(
-        ContainerImpl* container
-    ) : container_impl(container){};
-
-    Container::~Container(){
-        delete container_impl;
-        container_impl = nullptr;
-    }
+        const std::string& name,
+        const std::vector<std::string>& identifiers,
+        const std::string& description,
+        const Callback& callback
+        ) :
+        name_(name),
+        identifiers_(identifiers),
+        description_(description),
+        callback_(callback),
+        active_(false) { };
 
     const std::string Container::getName(){
-        return std::string(container_impl->name);
-    }
-
-    const ArgType Container::getType(){
-        return container_impl->option_type;
-    }
-
-    const std::vector<std::string> Container::getIdentifiers(){
-        return container_impl->identifiers;
-    }
-
-    const std::string Container::getPlaceholderText(){
-        return std::string(container_impl->placeholder);
-    }
+        return name_;
+    };
 
     const std::string Container::getDescription(){
-        return std::string(container_impl->desc);
-    }
+        return description_;
+    };
 
-    bool Container::isActive(){
-        return container_impl->isActive;
-    }
+    const std::vector<std::string> Container::getIdentifiers(){
+        return identifiers_;
+    };
 
-    std::pair<bool, std::string> Container::getValue(){
-        const bool isActive = container_impl->isActive;
-        return std::make_pair(isActive, isActive? container_impl->value[0] : "");
-    }
+    const bool Container::isActive(){
+        return active_;
+    };
 
-    std::pair<bool, std::vector<std::string>> Container::getValues(){
-        return std::make_pair(container_impl->isActive, container_impl->value);
-    }
+    UserInputContainer::UserInputContainer(
+        const std::string& name,
+        const std::vector<std::string>& identifiers,
+        const std::string& description,
+        const std::string& placeholder_text,
+        const Validator& validator,
+        const Callback& error_callback,
+        const Callback& callback
+    ) : Container(name, identifiers, description, callback),
+        placeholder_text_(placeholder_text),
+        validator_(validator),
+        error_callback_(error_callback),
+        validation_(false),
+        validation_failure_reason_("No input value.")
+    { };
 
-    std::pair<bool, std::string> Container::getValidation(){
-        return std::make_pair(container_impl->validation_succeeded, container_impl->validation_failure_reason);
-    }
+    const std::string UserInputContainer::getPlaceholderText(){
+        return placeholder_text_;
+    };
 
-    Validator Container::getValidator(){
-        return container_impl->validator;
-    }
+    const std::string UserInputContainer::getUserInput(){
+        return user_input_;
+    };
 
-    Callback Container::getCallback(){
-        return container_impl->callback;
-    }
+    const std::pair<bool, std::string> UserInputContainer::getValidation(){
+        return std::make_pair(validation_, validation_failure_reason_);
+    };
 
-    bool Container::hasValidator(){
-        return (container_impl->validator != nullptr);
-    }
-
-    bool Container::hasCallback(){
-        return (container_impl->callback != nullptr);
-    }
+    const std::string TypedInputContainer<std::string>::getValue() {
+        if (converter_ != nullptr) return converted_value_;
+        else return user_input_;
+    };
 }
