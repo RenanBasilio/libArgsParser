@@ -12,6 +12,6 @@
 namespace ArgsParser
 {
     void autohelper(std::ostream& stream){
-        // To-Do: Write method to generate help text.
+        // TODO: Generate help text.
     };
 }
