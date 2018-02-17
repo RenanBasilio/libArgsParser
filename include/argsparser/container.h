@@ -62,7 +62,9 @@ namespace ArgsParser
              * the placeholder text from a UserInputContainer through an object
              * of type Container.
              */
-            virtual const std::string getPlaceholderText() = 0;
+            virtual const std::string getPlaceholderText(){
+                return "";
+            };
 
             /**
              * This method retrieves whether this container is active. This is

@@ -24,7 +24,7 @@ namespace ArgsParser
      * A token of 00000000 is referred to as a null token and represents an
      * invalid or otherwise unsuccessful registration.
      */
-    typedef unsigned short int idtoken;
+    typedef unsigned short int token;
     const unsigned short int null_token = 0;
 
     /**
@@ -45,7 +45,7 @@ namespace ArgsParser
      * 
      * Some sample validator methods are defined in samples/validators.h
      */
-    typedef std::function<bool(const std::string&)> Validator;
+    using Validator = std::function<bool()>;
 
     /**
      * This is the declaration of a callback function. 
@@ -57,7 +57,7 @@ namespace ArgsParser
      * 
      * Some sample callback methods are defined in samples/callbacks.h
      */
-    typedef std::function<void()> Callback;
+    using Callback = std::function<void()>;
 
     /**
      * This is the declaration of a converter function.

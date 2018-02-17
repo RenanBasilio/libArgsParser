@@ -118,7 +118,37 @@ namespace ArgsParser
         return false;
     }
 
-    idtoken Parser::register_container(ArgType type, Container* container){
+    token Parser::register_switch(
+        const std::string& name,
+        const std::vector<std::string>& identifiers,
+        const std::string& description,
+        const Callback& callback
+    ){
+        // First check if all identifiers are open to be registered.
+        if(isNameRegistered(name)) 
+            throw std::runtime_error( "Name \"" + name + "\" is already registered." );
+
+        std::vector<std::string> identifiers_(identifiers.size());
+        for(size_t i = 0; i < identifiers.size(); i++)
+        {
+            identifiers_[i] = make_identifier(identifiers[i]);
+            if(isIdentifierRegistered(identifiers_[i]))
+                throw std::runtime_error( "Identifier \"" + identifiers_[i] + "\" is already registered." );
+        }
+
+        Container* container = new Container(
+            name,
+            identifiers_,
+            description,
+            callback
+        );
+
+        token id = register_container(ArgType::Switch, container);
+
+        return id;
+    }
+
+    token Parser::register_container(ArgType type, Container* container){
         // The identifier type allows for up to 6553 options of each type to be
         // registered. As such, throw an exception if that amount is reached.
 
@@ -151,8 +181,8 @@ namespace ArgsParser
         // Calculate the id of the container.
         // The last digit of the container is the type (ArgType), while
         // the remaining digits are the index in the container.
-        idtoken id = static_cast<idtoken>(( index * 10 ) + ArgType::Positional);
-        std::pair<ArgType, idtoken> token_pair = std::make_pair(type, id);
+        token id = static_cast<token>(( index * 10 ) + ArgType::Positional);
+        std::pair<ArgType, token> token_pair = std::make_pair(type, id);
 
         // Add the id to the map of names.
         parser_impl->names[container->getName()] = token_pair;
