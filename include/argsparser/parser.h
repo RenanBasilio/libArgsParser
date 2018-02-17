@@ -36,7 +36,7 @@ namespace ArgsParser
              * @param {ArgType} type The type of option in the container.
              * @param {Container*} container The container being registered.
              */
-            idtoken register_container(ArgType type, Container* container);
+            token register_container(ArgType type, Container* container);
 
             /**
              * This method sets the error description to the message provided.
@@ -102,13 +102,14 @@ namespace ArgsParser
              * @param {std::string} name The name of the positional.
              * @param {std::string} placeholder_text The text to show in a help message to describe the positional.
              * @param {Validator} validator The method to use to validate the user input string.
+             * @param {Converter} converter The converter method to use for converting string input to type T.
              * @param {Callback} error_callback A method to call in case validation fails.
              * @param {Callback} callback A method to call in case validation succeeds.
-             * @return {bool} Whether the registration of the parameter succeeded.
+             * @return {token} The token to retrieve the argument value by Id.
              * @except {std::runtime_error} Registration failure.
              */
             template <typename T>
-            idtoken register_positional(
+            token register_positional(
                 const std::string& name,
                 const std::string& placeholder_text,
                 const Validator& validator = nullptr,
@@ -132,7 +133,7 @@ namespace ArgsParser
                         callback
                     );
 
-                    idtoken id = register_container(ArgType::Positional, container);
+                    token id = register_container(ArgType::Positional, container);
 
                     return id;
                 }
@@ -145,7 +146,7 @@ namespace ArgsParser
                     return null_token;
                 }
             }
-            idtoken register_positional(
+            token register_positional(
                 const std::string& name,
                 const std::string& placeholder_text,
                 const Validator& validator = nullptr,
@@ -161,6 +162,37 @@ namespace ArgsParser
                     callback
                 );
             }
+
+            /**
+             * This method registers a switch to the parser. Usage example:
+             *      Parser.register_switch(
+             *          "help", {"h", "help"}, "Outputs help text to the command line.", autohelp);
+             * 
+             * The above line will enable parsing the following lines:
+             *      myapp -h
+             *      myapp --help
+             * Upon reading either switch, the parser will call it's callback method.
+             * 
+             * Autohelp will generate the following help text:
+             *      -h, --help          Outputs help text to the command line.
+             * 
+             * The method returns true if the option was registered successfully.
+             * Otherwise it returns false and sets the "error_description" 
+             * variable to a description of the error.
+             * 
+             * @param {std::string} name The name of the option.
+             * @param {std::vector<std::string>} identifiers The identifiers to register with this option.
+             * @param {std::string} description The description of the option to use for help text.
+             * @param {Callback} callback A function to call upon encountering this switch.
+             * @return {token} The token to retrieve the argument value by Id.
+             * @except {std::runtime_error} Registration failure.
+             */
+            token register_switch(
+                const std::string& name,
+                const std::vector<std::string>& identifiers,
+                const std::string& description = "Description not given.",
+                const Callback& callback = nullptr
+            );
 
             /**
              * This method registers an input value option to the parser. Usage example:
@@ -185,13 +217,14 @@ namespace ArgsParser
              * @param {std::string} placeholder_text The text that will be displayed within <> in the help text.
              * @param {std::string} description The description of the option that will be displayed in the help text.
              * @param {Validator} validator A function to check if the parameter provided with the option is valid.
+             * @param {Converter} converter The converter method to use for converting string input to type T.
              * @param {Callback} error_callback A function to call if validation fails.
              * @param {Callback} callback A function to be called if validation succeeds.
-             * @return {bool} Whether the registration of the parameter succeeded.
+             * @return {token} The token to retrieve the argument value by Id.
              * @except {std::runtime_error} Registration failure.
              */
             template <typename T>
-            idtoken register_value_option(
+            token register_option(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& placeholder_text = "value",
@@ -229,7 +262,7 @@ namespace ArgsParser
                     );
 
                     // And push the container to the array of registered options.
-                    idtoken id = register_container(ArgType::Option, container);
+                    token id = register_container(ArgType::Option, container);
 
                     return id;
                 }
@@ -242,7 +275,7 @@ namespace ArgsParser
                     return null_token;
                 }
             }
-            idtoken register_value_option(
+            token register_option(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& placeholder_text = "value",
@@ -253,7 +286,7 @@ namespace ArgsParser
                 const Callback& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
-                return register_value_option<std::string>(
+                return register_option<std::string>(
                     name,
                     identifiers,
                     placeholder_text,
