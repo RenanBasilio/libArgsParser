@@ -6,6 +6,10 @@
         {
             "label": "Make",
             "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
@@ -65,10 +69,56 @@
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
+            "command": "ctest",
+            "args": [
+                "-C", "Debug"
+            ]
+        },
+        {
+            "label": "Test (Release)",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "command": "ctest",
+            "args": [
+                "-C", "Release"
+            ]
+        },
+        {
+            "label": "Build and Test (Debug)",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
             "dependsOn": "Build (Debug)",
             "command": "ctest",
             "args": [
                 "-C", "Debug"
+            ]
+        },
+        {
+            "label": "Build and Test (Release)",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "dependsOn": "Build (Release)",
+            "command": "ctest",
+            "args": [
+                "-C", "Release"
             ]
         }
     ]
