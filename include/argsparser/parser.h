@@ -312,16 +312,5 @@ namespace ArgsParser
              * @return {bool} Whether autohelp was enabled successfully.
              */
             bool enable_autohelp();
-
-            /**
-             * This method checks if an identifier is valid. That is, if the identifier
-             * is prefixed by the correct amount of dashes and does not contain any
-             * invalid characters. Valid characters are:
-             *      "-AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"
-             * 
-             * @param {std::string} identifier The identifier to check.
-             * @return {bool} Whether the string is a valid identifier.
-             */
-            bool check_identifier(const std::string& identifier);
     };
 }

@@ -11,20 +11,22 @@ The below instructions apply to anyone intending to use this library as a static
 ### Table of Contents
 
 * [Quick Start](#quick-start)
-* [Requirements](#requirements)
     * [Building From Source](#building-from-source)
+        * [Requirements](#requirements)
+        * [Step by Step Instructions](#step-by-step-instructions)
 * [Features](#features)
 * [Suggestions and Bug Reports](#suggestions-and-bug-reports)
 
 # Quick Start
-## Requirements
+
+## Building From Source
+### Requirements
 1. [CMake](https://cmake.org/) should be installed and in the system `PATH`.
 2. A C++ compiler for your operating system. Below are a few recommendations.
     * Windows: [MSBuild](http://landinghub.visualstudio.com/visual-cpp-build-tools)
     * MAC: [clang](https://clang.llvm.org/)
     * Linux: [gcc/g++](https://gcc.gnu.org/)
-
-## Building From Source
+### Step by Step Instructions
 1. Create a `build` directory and move into it: `mkdir build && cd build`
 2. Use CMake to generate build scripts: `cmake ..`
 3. Build the static library: `cmake --build . --config Release`
