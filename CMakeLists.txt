@@ -60,9 +60,10 @@ target_include_directories(${LIB_NAME} PUBLIC include/argsparser)
 
 configure_file(ArgsParser.pc.in ArgsParser.pc @ONLY)
 install(TARGETS ${LIB_NAME} 
-    LIBRARY DESTINATION lib 
-    PUBLIC_HEADER DESTINATION include/${LIB_NAME}
-    ARCHIVE DESTINATION include/${LIB_NAME}/static)
+        LIBRARY DESTINATION lib 
+        ARCHIVE DESTINATION include/${LIB_NAME}/static
+        PUBLIC_HEADER DESTINATION include/${LIB_NAME}
+        PRIVATE_HEADER DESTINATION share/${LIB_NAME})
 
 # Instructions to build test executable
 option(BUILD_ARGSPARSER_TESTS "Build Tests." ON)

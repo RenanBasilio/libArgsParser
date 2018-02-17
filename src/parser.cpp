@@ -96,28 +96,6 @@ namespace ArgsParser
         }
     }
 
-    bool Parser::check_identifier(const std::string& string){
-
-        // Check for invalid characters.
-        size_t invalid_char = string.find_first_not_of("-AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz");
-        if(invalid_char != std::string::npos) return false;
-
-        // Check if the identifier ends with a dash.
-        if((string.at(string.length()-1)) == '-') return false;
-
-        // Check if the identifier is a short identifier and starts with a dash
-        if((string.length() == 2) && string.at(0) == '-') return true;
-
-        // Check if the identifier is a long identifier prefixed by two dashes
-        if((string.length() > 2) 
-            && string.at(0) == '-' 
-            && string.at(1) == '-'
-            && string.at(2) != '-') return true;
-
-        // If neither check passes, return false.
-        return false;
-    }
-
     token Parser::register_switch(
         const std::string& name,
         const std::vector<std::string>& identifiers,
