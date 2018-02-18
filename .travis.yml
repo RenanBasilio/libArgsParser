@@ -1,33 +1,17 @@
 language: cpp
+compiler:
+ - g++
+
+os:
+ - linux
+ - osx
 
 branches:
-  only:
-    - master
-    - dev
+ only:
+  - master
+  - dev
 
-matrix:
-  include:
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-      env:
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-    - os: osx
-        osx_image: xcode8
-        env:
-          - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-
-addons:
-  apt:
-    sources:
-      - george-edison55-precise-backports
-    packages:
-      - cmake-data
-      - cmake
-
+dist: trusty
 install: true
-script: mkdir build && cd build && cmake . && cmake --build . --config Release
+
+script: mkdir build && cd build && cmake .. && cmake --build . --config Release
