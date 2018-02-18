@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <vector>
 #include <argsparser/autohelp.h>
+#include <argsparser/util.h>
 
 namespace ArgsParser
 { 
