@@ -1,4 +1,5 @@
 # ArgsParser - C++ Command Line Argument Parser
+[![Build Status](https://travis-ci.org/RenanBasilio/ArgsParser.svg?branch=master)](https://travis-ci.org/RenanBasilio/ArgsParser)
 [![Build status](https://ci.appveyor.com/api/projects/status/y9619y0sipb55wbu?svg=true)](https://ci.appveyor.com/project/RenanBasilio/argsparser)
 
 ArgsParser is a C++ static library written with the goal of providing a simple yet complete command line argument parser for C++.
@@ -25,7 +26,7 @@ The below instructions apply to anyone intending to use this library as a static
 1. [CMake](https://cmake.org/) should be installed and in the system `PATH`.
 2. A C++ compiler for your operating system. Below are a few recommendations.
     * Windows: [MSBuild](http://landinghub.visualstudio.com/visual-cpp-build-tools)
-    * MAC: [clang](https://clang.llvm.org/)
+    * MAC: [gcc/g++](http://gcc.gnu.org/) or [clang](https://clang.llvm.org/)
     * Linux: [gcc/g++](https://gcc.gnu.org/)
 ### Step by Step Instructions
 1. Create a `build` directory and move into it: `mkdir build && cd build`
