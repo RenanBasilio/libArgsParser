@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include <argsparser/common.h>
+#include <algorithm>
+#include <argsparser/util.h>
 
 namespace ArgsParser
 {
