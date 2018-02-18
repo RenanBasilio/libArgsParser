@@ -132,19 +132,19 @@ namespace ArgsParser
         switch (type)
         {
         case ArgType::Positional:
-            if (parser_impl->registered_positionals.size() == (USHRT_MAX / 10))
+            if (parser_impl->registered_positionals.size() == (std::numeric_limits<token>::max() / 10))
                 throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
             index = parser_impl->registered_positionals.size();
             parser_impl->registered_positionals.push_back(container);
             break;
         case ArgType::Option:
-            if (parser_impl->registered_options.size() == (USHRT_MAX / 10))
+            if (parser_impl->registered_options.size() == (std::numeric_limits<token>::max() / 10))
                 throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
             index = parser_impl->registered_options.size();
             parser_impl->registered_options.push_back(container);
             break;
         case ArgType::Switch:
-            if (parser_impl->registered_switches.size() == (USHRT_MAX / 10))
+            if (parser_impl->registered_switches.size() == (std::numeric_limits<token>::max() / 10))
                 throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
             index = parser_impl->registered_switches.size();
             parser_impl->registered_switches.push_back(container);
