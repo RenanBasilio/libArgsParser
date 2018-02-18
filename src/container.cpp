@@ -7,7 +7,6 @@
  */
 
 #include <argsparser/container.h>
-#include <algorithm>
 
 namespace ArgsParser
 {

@@ -1,5 +1,5 @@
 /**
- * autohelpe.h
+ * autohelp.h
  * 
  * This file contains the declaration of methods used to automatically
  * generate usage help text.
