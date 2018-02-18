@@ -67,6 +67,7 @@ namespace ArgsParser
         return std::make_pair(validation_, validation_failure_reason_);
     };
 
+    template<>
     const std::string TypedInputContainer<std::string>::getValue() {
         if (converter_ != nullptr) return converted_value_;
         else return user_input_;
