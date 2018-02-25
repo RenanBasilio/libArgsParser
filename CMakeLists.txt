@@ -63,7 +63,7 @@ install(TARGETS ${LIB_NAME}
         LIBRARY DESTINATION lib 
         ARCHIVE DESTINATION include/${LIB_NAME}/static
         PUBLIC_HEADER DESTINATION include/${LIB_NAME}
-        PRIVATE_HEADER DESTINATION share/${LIB_NAME})
+        PRIVATE_HEADER DESTINATION include/${LIB_NAME})
 
 # Instructions to build test executable
 option(BUILD_ARGSPARSER_TESTS "Build Tests." ON)
