@@ -22,21 +22,20 @@ namespace ArgsParser
         callback_(callback),
         active_(false) { };
 
-    const std::string Container::getName(){
-        return name_;
-    };
+    Container::~Container(){
 
-    const std::string Container::getDescription(){
-        return description_;
-    };
+    }
 
-    const std::vector<std::string> Container::getIdentifiers(){
-        return identifiers_;
-    };
-
-    const bool Container::isActive(){
-        return active_;
-    };
+    Container* Container::clone() const{
+        Container* copy = new Container(
+            name_,
+            identifiers_,
+            description_,
+            callback_
+        );
+        copy->active_ = active_;
+        return copy;
+    }
 
     UserInputContainer::UserInputContainer(
         const std::string& name,
@@ -53,6 +52,42 @@ namespace ArgsParser
         validation_(false),
         validation_failure_reason_("No input value.")
     { };
+
+    UserInputContainer::~UserInputContainer(){
+
+    }
+
+    UserInputContainer* UserInputContainer::clone() const{
+        UserInputContainer* copy = new UserInputContainer(
+            name_,
+            identifiers_,
+            description_,
+            placeholder_text_,
+            validator_,
+            error_callback_,
+            callback_
+        );
+        copy->user_input_ = user_input_;
+        copy->validation_ = validation_;
+        copy->validation_failure_reason_ = validation_failure_reason_;
+        return copy;
+    }
+
+    const std::string Container::getName(){
+        return name_;
+    };
+
+    const std::string Container::getDescription(){
+        return description_;
+    };
+
+    const std::vector<std::string> Container::getIdentifiers(){
+        return identifiers_;
+    };
+
+    const bool Container::isActive(){
+        return active_;
+    };
 
     const std::string UserInputContainer::getPlaceholderText(){
         return placeholder_text_;

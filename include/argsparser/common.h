@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <exception>
@@ -45,7 +46,7 @@ namespace ArgsParser
      * 
      * Some sample validator methods are defined in samples/validators.h
      */
-    using Validator = std::function<bool()>;
+    using Validator = std::function<bool(const std::string&)>;
 
     /**
      * This is the declaration of a callback function. 

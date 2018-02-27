@@ -83,6 +83,17 @@ namespace ArgsParser
                 const std::string& description = "",
                 const Callback& callback = nullptr
             );
+
+            /**
+             * Destructor of the container class.
+             */
+            virtual ~Container(); 
+
+            /**
+             * Cloning method.
+             * @return {Container*} A pointer to a new Container object cloned from this object.
+             */
+            virtual Container* clone() const;
     };
 
 
@@ -92,8 +103,6 @@ namespace ArgsParser
      * input parameters.
      */
     class UserInputContainer : public Container{
-        std::string placeholder_text_;
-
         public:
             /**
              * This method retrieves the placeholder text assigned to this
@@ -128,8 +137,21 @@ namespace ArgsParser
                 const Callback& callback = nullptr
             );
 
+            /**
+             * This is the destructor for the user input container.
+             */
+            virtual ~UserInputContainer();
+
+            /**
+             * Cloning method.
+             * @return {Container*} A pointer to a new UserInputContainer object
+             * cloned from this object.
+             */
+            virtual UserInputContainer* clone() const;
+
 
         protected:
+            std::string placeholder_text_;
             std::string user_input_;
 
             const Validator validator_;
@@ -181,6 +203,35 @@ namespace ArgsParser
                     ),
                 converter_(converter)
                 {};
+
+            /**
+             * Cloning method.
+             * @return {Container*} A pointer to a new TypedInputContainer object
+             * cloned from this object.
+             */
+            virtual TypedInputContainer<T>* clone() const
+            {
+                TypedInputContainer<T>* copy = new TypedInputContainer<T>(
+                    name_,
+                    identifiers_,
+                    description_,
+                    placeholder_text_,
+                    validator_,
+                    converter_,
+                    error_callback_,
+                    callback_
+                );
+                copy->user_input_ = user_input_;
+                copy->validation_ = validation_;
+                copy->validation_failure_reason_ = validation_failure_reason_;
+                copy->converted_value_ = converted_value_;
+                return copy;
+            };
+
+            /**
+             * This is the destructor for the typed user input container.
+             */
+            virtual ~TypedInputContainer() {};
 
         private:
             T converted_value_;
