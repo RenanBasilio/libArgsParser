@@ -21,11 +21,11 @@ namespace ArgsParser
      */
     class Parser{
         private:
+            struct ParserImpl;
+            std::unique_ptr<ParserImpl> parser_impl;
+
             // Whether errors should throw unhandled exceptions.
             bool errors_critical;
-
-            struct ParserImpl;
-            ParserImpl* parser_impl;
 
             // The following private methods are used to interface with the
             // implementation class.
@@ -300,6 +300,27 @@ namespace ArgsParser
                     callback
                 );
             }
+
+            /**
+             * This method returns a vector of all tokens that have been
+             * registered to the parser.
+             * @return {std::vector<token>} The list of registered tokens.
+             */
+            std::vector<token> get_registered_tokens();
+
+            /**
+             * This method returns a vector of all names that have been
+             * registered to the parser.
+             * @return {std::vector<std::string>} The list of registered names.
+             */
+            std::vector<std::string> get_registered_names();
+
+            /**
+             * This method gets a registered container by it's token.
+             * @param {token} The registration token.
+             * @return {Container} The container.
+             */
+            Container get_container_by_token(token token);
 
             /**
              * Calling this method will register the 'h' and 'help' switches under 'help'.

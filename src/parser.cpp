@@ -27,10 +27,14 @@ namespace ArgsParser
     }
 
     Parser::Parser(const Parser& other):
-        parser_impl(new ParserImpl(*other.parser_impl)),
+        parser_impl(new ParserImpl()),
         error_description(parser_impl->error_description),
         errors_critical(other.errors_critical)
     { 
+        for(auto var : parser_impl->names)
+        {
+            register_container(var.second.first, &get_container_by_token(var.second.second));
+        }
     }
 
     Parser::Parser(Parser&& other):
@@ -47,14 +51,13 @@ namespace ArgsParser
     }
 
     Parser::~Parser(){
-        delete parser_impl;
-        parser_impl = nullptr;
+        parser_impl.reset();
     }
 
     void swap(Parser& first, Parser& second){
         using std::swap;
 
-        swap(first.parser_impl, second.parser_impl);
+        std::swap(first.parser_impl, second.parser_impl);
     }
 
     bool Parser::isRegistered(const std::string& symbol){
@@ -173,6 +176,43 @@ namespace ArgsParser
         parser_impl->error_description = error_string;
     }
 
+    std::vector<token> Parser::get_registered_tokens(){
+        std::vector<token> tokens;
+        for(auto var : parser_impl->names)
+        {
+            tokens.push_back(var.second.second);
+        }
+        return tokens;
+    }
+
+    std::vector<std::string> Parser::get_registered_names(){
+        std::vector<std::string> names;
+        for(auto var : parser_impl->names)
+        {
+            names.push_back(var.first);
+        }
+        return names;
+    }
+
+    Container Parser::get_container_by_token(token token){
+        size_t array = token % 10;
+        size_t position = token / 10;
+
+        Container* result;
+        switch (array)
+        {
+            case ArgType::Option:
+                result = parser_impl->registered_options[position]->clone();
+            case ArgType::Positional:
+                result = parser_impl->registered_positionals[position]->clone();
+            case ArgType::Switch:
+                result = parser_impl->registered_switches[position]->clone();
+            default:
+                break;
+        }
+        return *result;
+    }
+
     Parser::ParserImpl::ParserImpl() :
         error_description("")
         { };
@@ -182,10 +222,12 @@ namespace ArgsParser
         for (size_t i = 0; i < registered_options.size(); i++)
         {
             delete registered_options[i];
+            registered_options[i] = nullptr;
         };
         for (size_t i = 0; i < registered_positionals.size(); i++)
         {
             delete registered_positionals[i];
+            registered_positionals[i] = nullptr;
         };
     };
 }
