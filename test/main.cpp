@@ -2,7 +2,7 @@
 #include <argsparser.h>
 #include <unordered_map>
 
-void print_string(std::string& string){
+void print_string(std::string string){
     std::cout << string << std::endl;
 }
 
