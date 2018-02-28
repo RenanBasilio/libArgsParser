@@ -24,8 +24,8 @@ namespace ArgsParser
          * corresponding vector, while the symbol maps map command line symbols
          * (such as "-h") for access when parsing the command line.
          */
-        std::unordered_map<std::string, std::pair<ArgType, token>> names;
-        std::unordered_map<std::string, std::pair<ArgType, token>> identifiers;
+        std::unordered_map<std::string, token> names;
+        std::unordered_map<std::string, token> identifiers;
 
         /**
          * These vectors contain pointers to the actual containers storing each
