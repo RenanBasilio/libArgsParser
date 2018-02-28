@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <argsparser/container.h>
+#include <argsparser/parser.h>
 
 namespace ArgsParser
 {
@@ -27,5 +28,5 @@ namespace ArgsParser
      *          -p, --value-option <placeholder>    ${value_option_description}
      *          ...
      */
-    void autohelper(std::ostream& stream = std::cout);
+    void autohelper(const Parser& parser, std::ostream& stream = std::cout);
 }

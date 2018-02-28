@@ -14,18 +14,6 @@
 
 namespace ArgsParser
 {
-    
-    /**
-     * This enumeration is used internally to define the possible types of
-     * options and store them for use by the parser.
-     */
-    enum ArgType
-    {
-        Positional = 1,
-        Switch,
-        Option
-    };
-
     /**
      * This template base class is used to store basic information about an
      * argument type to be parsed.
@@ -38,6 +26,7 @@ namespace ArgsParser
             const std::string description_;
             const std::vector<std::string> identifiers_;
             const Callback callback_;
+            const ArgType type_;
 
             bool active_;
 
@@ -45,25 +34,30 @@ namespace ArgsParser
             /**
              * This method retrieves the name assigned to this container.
              */
-            const std::string getName();
+            std::string getName() const;
 
             /**
-             * This method retrieved the description assigned to this container.
+             * This method retrieves the type of this container.
              */
-            const std::string getDescription();
+            ArgType getType() const;
+
+            /**
+             * This method retrieves the description assigned to this container.
+             */
+            std::string getDescription() const;
             
             /**
              * This method retrives the list of identifiers registered to this
              * container.
              */
-            const std::vector<std::string> getIdentifiers();
+            std::vector<std::string> getIdentifiers() const;
 
             /**
              * This pure virtual method provides the facilities for retrieving
              * the placeholder text from a UserInputContainer through an object
              * of type Container.
              */
-            virtual const std::string getPlaceholderText(){
+            virtual std::string getPlaceholderText() const{
                 return "";
             };
 
@@ -72,12 +66,13 @@ namespace ArgsParser
              * always false before parsing, and will be set if this container
              * refers to an option called by the user.
              */
-            const bool isActive();
+            bool isActive() const;
 
             /**
              * Constructor of the container class.
              */
             Container(
+                const ArgType type,
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& description = "",
@@ -109,25 +104,26 @@ namespace ArgsParser
              * container. The placeholder text is used for generating help
              * text.
              */
-            const std::string getPlaceholderText();
+            virtual std::string getPlaceholderText() const;
 
             /**
              * This method retrieves user input how it was parsed from the
              * command line. Only string conversion is performed.
              */
-            const std::string getUserInput();
+            std::string getUserInput() const;
 
             /**
              * This method returns the validation state of the user input as a
              * pair, with the first element being whether the validation was
              * successful and the second being the error string generated.
              */
-            const std::pair<bool, std::string> getValidation();
+            std::pair<bool, std::string> getValidation() const;
 
             /**
              * This is the constructor for the user input container.
              */
             UserInputContainer(
+                const ArgType type,
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& description = "",
@@ -175,7 +171,7 @@ namespace ArgsParser
             /**
              * This method gets the converted value of the user input.
              */
-            const T getValue() {
+            T getValue() const{
                 if (converter_ != nullptr) return converted_value_;
                 else throw std::runtime_error("Warning: Converter undefined. To retrieve string input use getUserInput() instead.");
             };
@@ -184,6 +180,7 @@ namespace ArgsParser
              * This is the constructor for the typed user input container.
              */
             TypedInputContainer(
+                const ArgType type,
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& description = "",
@@ -193,6 +190,7 @@ namespace ArgsParser
                 const Callback& error_callback = nullptr,
                 const Callback& callback = nullptr
             ) : UserInputContainer(
+                    type,
                     name, 
                     identifiers,
                     description,
@@ -212,6 +210,7 @@ namespace ArgsParser
             virtual TypedInputContainer<T>* clone() const
             {
                 TypedInputContainer<T>* copy = new TypedInputContainer<T>(
+                    type_,
                     name_,
                     identifiers_,
                     description_,

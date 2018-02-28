@@ -10,7 +10,6 @@
 
 #include <unordered_map>
 #include <limits>
-#include <argsparser/autohelp.h>
 #include <argsparser/container.h>
 
 namespace ArgsParser
@@ -37,14 +36,14 @@ namespace ArgsParser
              * @param {ArgType} type The type of option in the container.
              * @param {Container*} container The container being registered.
              */
-            token register_container(ArgType type, Container* container);
+            token registerContainer(ArgType type, Container* container);
 
             /**
              * This method sets the error description to the message provided.
              * 
              * @param {std::string} message The error message.
              */
-            void set_error(const std::string& message);
+            void setError(const std::string& message);
 
         public:
             Parser();
@@ -64,14 +63,14 @@ namespace ArgsParser
              * @param {std::string} symbol The symbol to search for.
              * @return {bool} True if symbol is registered. False otherwise.
              */
-            bool isRegistered(const std::string& symbol);
+            bool isRegistered(const std::string& symbol) const;
 
             /**
              * This method returns whether a name is registered to the parser.
              * @param {std::string} name The name to search for.
              * @return {bool} True if name is registered. False otherwise.
              */
-            bool isNameRegistered(const std::string& name);
+            bool isNameRegistered(const std::string& name) const;
 
             /**
              * This method returns whether an identifier is registered to the 
@@ -79,7 +78,7 @@ namespace ArgsParser
              * @param {std::string} identifier The identifier to search for.
              * @return {bool} True if the identifier is registered. False otherwise.
              */
-            bool isIdentifierRegistered(const std::string& identifier);
+            bool isIdentifierRegistered(const std::string& identifier) const;
 
             /**
              * This method register a positional argument to the parser. Usage example:
@@ -110,7 +109,7 @@ namespace ArgsParser
              * @except {std::runtime_error} Registration failure.
              */
             template <typename T>
-            token register_positional(
+            token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
                 const Validator& validator = nullptr,
@@ -124,6 +123,7 @@ namespace ArgsParser
                         throw std::runtime_error("Name \"" + name + "\" is already registered.");
 
                     TypedInputContainer<T>* container = new TypedInputContainer<T>(
+                        ArgType::Positional,
                         name,
                         std::vector<std::string>(),
                         "",
@@ -134,7 +134,7 @@ namespace ArgsParser
                         callback
                     );
 
-                    token id = register_container(ArgType::Positional, container);
+                    token id = registerContainer(ArgType::Positional, container);
 
                     return id;
                 }
@@ -142,19 +142,19 @@ namespace ArgsParser
                     std::string error_string = std::string("Registration Error: ") + e.what();
 
                     if(errors_critical) throw std::runtime_error(error_string);
-                    else set_error(error_string);
+                    else setError(error_string);
 
-                    return null_token;
+                    return NULL_TOKEN;
                 }
             }
-            token register_positional(
+            token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
                 const Validator& validator = nullptr,
                 const Callback& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
-                return register_positional<std::string>(
+                return registerPositional<std::string>(
                     name,
                     placeholder_text,
                     validator,
@@ -188,7 +188,7 @@ namespace ArgsParser
              * @return {token} The token to retrieve the argument value by Id.
              * @except {std::runtime_error} Registration failure.
              */
-            token register_switch(
+            token registerSwitch(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& description = "Description not given.",
@@ -225,7 +225,7 @@ namespace ArgsParser
              * @except {std::runtime_error} Registration failure.
              */
             template <typename T>
-            token register_option(
+            token registerOption(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& placeholder_text = "value",
@@ -252,6 +252,7 @@ namespace ArgsParser
                 
                     // If check was successful, create a new container object.
                     TypedInputContainer<T>* container = new TypedInputContainer<T>(
+                        ArgType::Option,
                         name,
                         identifiers_,
                         description,
@@ -263,7 +264,7 @@ namespace ArgsParser
                     );
 
                     // And push the container to the array of registered options.
-                    token id = register_container(ArgType::Option, container);
+                    token id = registerContainer(ArgType::Option, container);
 
                     return id;
                 }
@@ -271,12 +272,12 @@ namespace ArgsParser
                     std::string error_string = std::string("Registration Error: ") + e.what();
 
                     if(errors_critical) throw std::runtime_error(error_string);
-                    else set_error(error_string);
+                    else setError(error_string);
 
-                    return null_token;
+                    return NULL_TOKEN;
                 }
             }
-            token register_option(
+            token registerOption(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& placeholder_text = "value",
@@ -287,7 +288,7 @@ namespace ArgsParser
                 const Callback& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
-                return register_option<std::string>(
+                return registerOption<std::string>(
                     name,
                     identifiers,
                     placeholder_text,
@@ -306,21 +307,34 @@ namespace ArgsParser
              * registered to the parser.
              * @return {std::vector<token>} The list of registered tokens.
              */
-            std::vector<token> get_registered_tokens();
+            std::vector<token> getRegisteredTokens() const;
 
             /**
              * This method returns a vector of all names that have been
              * registered to the parser.
              * @return {std::vector<std::string>} The list of registered names.
              */
-            std::vector<std::string> get_registered_names();
+            std::vector<std::string> getRegisteredNames() const;
 
             /**
              * This method gets a registered container by it's token.
              * @param {token} The registration token.
              * @return {Container} The container.
              */
-            Container get_container_by_token(token token);
+            std::unique_ptr<Container> getContainerByToken(token token) const;
+
+            /**
+             * This method gets the program name (either as provided by the user
+             * or parsed by the application).
+             * @return {std::string} The name of the program.
+             */
+            std::string getProgramName() const;
+
+            /**
+             * This method sets the program name. If a name is set it will override
+             * one parsed from the command line.
+             */
+            void setProgramName(const std::string& name);
 
             /**
              * Calling this method will register the 'h' and 'help' switches under 'help'.
@@ -333,6 +347,6 @@ namespace ArgsParser
              * 
              * @return {bool} Whether autohelp was enabled successfully.
              */
-            bool enable_autohelp();
+            bool enableAutohelp();
     };
 }

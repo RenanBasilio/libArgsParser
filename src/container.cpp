@@ -11,11 +11,13 @@
 namespace ArgsParser
 {
     Container::Container(
+        const ArgType type,
         const std::string& name,
         const std::vector<std::string>& identifiers,
         const std::string& description,
         const Callback& callback
         ) :
+        type_(type),
         name_(name),
         identifiers_(identifiers),
         description_(description),
@@ -28,6 +30,7 @@ namespace ArgsParser
 
     Container* Container::clone() const{
         Container* copy = new Container(
+            type_,
             name_,
             identifiers_,
             description_,
@@ -38,6 +41,7 @@ namespace ArgsParser
     }
 
     UserInputContainer::UserInputContainer(
+        const ArgType type,
         const std::string& name,
         const std::vector<std::string>& identifiers,
         const std::string& description,
@@ -45,7 +49,7 @@ namespace ArgsParser
         const Validator& validator,
         const Callback& error_callback,
         const Callback& callback
-    ) : Container(name, identifiers, description, callback),
+    ) : Container(type, name, identifiers, description, callback),
         placeholder_text_(placeholder_text),
         validator_(validator),
         error_callback_(error_callback),
@@ -59,6 +63,7 @@ namespace ArgsParser
 
     UserInputContainer* UserInputContainer::clone() const{
         UserInputContainer* copy = new UserInputContainer(
+            type_,
             name_,
             identifiers_,
             description_,
@@ -73,36 +78,40 @@ namespace ArgsParser
         return copy;
     }
 
-    const std::string Container::getName(){
+    std::string Container::getName() const{
         return name_;
     };
 
-    const std::string Container::getDescription(){
+    ArgType Container::getType() const{
+        return type_;
+    }
+
+    std::string Container::getDescription() const{
         return description_;
     };
 
-    const std::vector<std::string> Container::getIdentifiers(){
+    std::vector<std::string> Container::getIdentifiers() const{
         return identifiers_;
     };
 
-    const bool Container::isActive(){
+    bool Container::isActive() const{
         return active_;
     };
 
-    const std::string UserInputContainer::getPlaceholderText(){
+    std::string UserInputContainer::getPlaceholderText() const{
         return placeholder_text_;
     };
 
-    const std::string UserInputContainer::getUserInput(){
+    std::string UserInputContainer::getUserInput() const{
         return user_input_;
     };
 
-    const std::pair<bool, std::string> UserInputContainer::getValidation(){
+    std::pair<bool, std::string> UserInputContainer::getValidation() const{
         return std::make_pair(validation_, validation_failure_reason_);
     };
 
     template<>
-    const std::string TypedInputContainer<std::string>::getValue() {
+    std::string TypedInputContainer<std::string>::getValue() const{
         if (converter_ != nullptr) return converted_value_;
         else return user_input_;
     };

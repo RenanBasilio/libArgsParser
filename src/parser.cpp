@@ -23,7 +23,7 @@ namespace ArgsParser
         error_description(parser_impl->error_description),
         errors_critical(errors_critical)
     {
-        if(autohelp) enable_autohelp();
+        if(autohelp) enableAutohelp();
     }
 
     Parser::Parser(const Parser& other):
@@ -33,7 +33,7 @@ namespace ArgsParser
     { 
         for(auto var : parser_impl->names)
         {
-            register_container(var.second.first, &get_container_by_token(var.second.second));
+            registerContainer(var.second.first, getContainerByToken(var.second).release());
         }
     }
 
@@ -60,15 +60,23 @@ namespace ArgsParser
         std::swap(first.parser_impl, second.parser_impl);
     }
 
-    bool Parser::isRegistered(const std::string& symbol){
+    std::string Parser::getProgramName() const{
+        return parser_impl->program_name;
+    }
+
+    void Parser::setProgramName(const std::string& name){
+        parser_impl->program_name = name;
+    }
+
+    bool Parser::isRegistered(const std::string& symbol) const{
         return (isNameRegistered(symbol) || isIdentifierRegistered(symbol));
     }
 
-    bool Parser::isNameRegistered(const std::string& name){
+    bool Parser::isNameRegistered(const std::string& name) const{
         return parser_impl->names.count(name) > 0;
     }
 
-    bool Parser::isIdentifierRegistered(const std::string& identifier){
+    bool Parser::isIdentifierRegistered(const std::string& identifier) const{
         // First check if this is a proper identifier. If not, make one.
         const std::string identifier_ = 
             (check_identifier(identifier)? identifier : make_identifier(identifier));
@@ -76,7 +84,7 @@ namespace ArgsParser
         return parser_impl->identifiers.count(identifier_) > 0;
     }
 
-    bool Parser::enable_autohelp(){
+    bool Parser::enableAutohelp(){
         try{
             // First test if both switches and the name are available.
             // As there is a distinct possibility of this method being the first
@@ -96,7 +104,7 @@ namespace ArgsParser
         }
     }
 
-    token Parser::register_switch(
+    token Parser::registerSwitch(
         const std::string& name,
         const std::vector<std::string>& identifiers,
         const std::string& description,
@@ -115,18 +123,19 @@ namespace ArgsParser
         }
 
         Container* container = new Container(
+            ArgType::Switch,
             name,
             identifiers_,
             description,
             callback
         );
 
-        token id = register_container(ArgType::Switch, container);
+        token id = registerContainer(ArgType::Switch, container);
 
         return id;
     }
 
-    token Parser::register_container(ArgType type, Container* container){
+    token Parser::registerContainer(ArgType type, Container* container){
         // The identifier type allows for up to 6553 options of each type to be
         // registered. As such, throw an exception if that amount is reached.
 
@@ -135,57 +144,59 @@ namespace ArgsParser
         switch (type)
         {
         case ArgType::Positional:
-            if (parser_impl->registered_positionals.size() == (std::numeric_limits<token>::max() / 10))
-                throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
+            if (parser_impl->registered_positionals.size() == (std::numeric_limits<unsigned short>::max()))
+                throw new std::runtime_error("Exceeded maximum number of same type options (>" 
+                    + std::numeric_limits<unsigned short>::max() + std::string(")."));
             index = parser_impl->registered_positionals.size();
             parser_impl->registered_positionals.push_back(container);
             break;
         case ArgType::Option:
-            if (parser_impl->registered_options.size() == (std::numeric_limits<token>::max() / 10))
-                throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
+            if (parser_impl->registered_options.size() == (std::numeric_limits<unsigned short>::max()))
+                throw new std::runtime_error("Exceeded maximum number of same type options (>" 
+                    + std::numeric_limits<unsigned short>::max() + std::string(")."));
             index = parser_impl->registered_options.size();
             parser_impl->registered_options.push_back(container);
             break;
         case ArgType::Switch:
-            if (parser_impl->registered_switches.size() == (std::numeric_limits<token>::max() / 10))
-                throw new std::runtime_error("Exceeded maximum number of same type options (>6553).");
+            if (parser_impl->registered_switches.size() == (std::numeric_limits<unsigned short>::max()))
+                throw new std::runtime_error("Exceeded maximum number of same type options (>" 
+                    + std::numeric_limits<unsigned short>::max() + std::string(")."));
             index = parser_impl->registered_switches.size();
             parser_impl->registered_switches.push_back(container);
             break;
         default:
-            return null_token;
+            return NULL_TOKEN;
         }
 
         // Calculate the id of the container.
         // The last digit of the container is the type (ArgType), while
         // the remaining digits are the index in the container.
-        token id = static_cast<token>(( index * 10 ) + ArgType::Positional);
-        std::pair<ArgType, token> token_pair = std::make_pair(type, id);
+        token id_token = std::make_pair(type, (unsigned short)index);
 
         // Add the id to the map of names.
-        parser_impl->names[container->getName()] = token_pair;
+        parser_impl->names[container->getName()] = id_token;
         std::vector<std::string> identifiers = container->getIdentifiers();
         for( size_t i = 0; i < identifiers.size(); i++){
-            parser_impl->identifiers[identifiers[i]] = token_pair;
+            parser_impl->identifiers[identifiers[i]] = id_token;
         }
 
-        return id;
+        return id_token;
     }
 
-    void Parser::set_error(const std::string& error_string){
+    void Parser::setError(const std::string& error_string){
         parser_impl->error_description = error_string;
     }
 
-    std::vector<token> Parser::get_registered_tokens(){
+    std::vector<token> Parser::getRegisteredTokens() const{
         std::vector<token> tokens;
         for(auto var : parser_impl->names)
         {
-            tokens.push_back(var.second.second);
+            tokens.push_back(var.second);
         }
         return tokens;
     }
 
-    std::vector<std::string> Parser::get_registered_names(){
+    std::vector<std::string> Parser::getRegisteredNames() const{
         std::vector<std::string> names;
         for(auto var : parser_impl->names)
         {
@@ -194,23 +205,25 @@ namespace ArgsParser
         return names;
     }
 
-    Container Parser::get_container_by_token(token token){
-        size_t array = token % 10;
-        size_t position = token / 10;
+    std::unique_ptr<Container> Parser::getContainerByToken(token token) const{
 
         Container* result;
-        switch (array)
+        switch (token.first)
         {
             case ArgType::Option:
-                result = parser_impl->registered_options[position]->clone();
+                result = parser_impl->registered_options[token.second];
+                break;
             case ArgType::Positional:
-                result = parser_impl->registered_positionals[position]->clone();
+                result = parser_impl->registered_positionals[token.second];
+                break;
             case ArgType::Switch:
-                result = parser_impl->registered_switches[position]->clone();
+                result = parser_impl->registered_switches[token.second];
+                break;
             default:
+                throw std::runtime_error("NULL_TOKEN presented.");
                 break;
         }
-        return *result;
+        return std::unique_ptr<Container>(result->clone());
     }
 
     Parser::ParserImpl::ParserImpl() :

@@ -17,6 +17,18 @@
 namespace ArgsParser
 {
     /**
+     * This enumeration is used internally to define the possible types of
+     * options and store them for use by the parser.
+     */
+    enum ArgType
+    {
+        Null,
+        Positional = 1,
+        Switch,
+        Option
+    };
+
+    /**
      * This defines the type of the id tokens returned by registration methods
      * in the parser. These can be used to more quickly retrieve registered
      * itemby skipping the hashing and lookup processes associated with stl
@@ -25,8 +37,8 @@ namespace ArgsParser
      * A token of 00000000 is referred to as a null token and represents an
      * invalid or otherwise unsuccessful registration.
      */
-    typedef unsigned short int token;
-    const unsigned short int null_token = 0;
+    typedef std::pair<ArgType, unsigned short int> token;
+    const token NULL_TOKEN = std::make_pair<ArgType, unsigned short int>(ArgType::Null, 0);
 
     /**
      * This is the declaration of a validator function.
