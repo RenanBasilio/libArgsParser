@@ -13,13 +13,13 @@ namespace ArgsParser
 {
     void autohelper(const Parser& parser, std::ostream& stream){
 
-        std::vector<token> tokens = parser.getRegisteredTokens();
+        std::vector<Token> tokens = parser.getRegisteredTokens();
         std::vector<std::string> positional_strings;
         std::vector<std::pair<std::string, std::string>> switch_strings;
         std::vector<std::pair<std::string, std::string>> option_strings;
         size_t max_id_size = 0;
 
-        for(token var : tokens)
+        for(Token var : tokens)
         {
             std::unique_ptr<Container> container = parser.getContainerByToken(var); 
 

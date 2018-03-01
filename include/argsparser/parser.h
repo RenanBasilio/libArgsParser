@@ -19,35 +19,18 @@ namespace ArgsParser
      * without additional features such as parameter validation.
      */
     class Parser{
-        private:
-            struct ParserImpl;
-            std::unique_ptr<ParserImpl> parser_impl;
+        struct ParserImpl;
+        std::unique_ptr<ParserImpl> parser_impl;
 
-            // Whether errors should throw unhandled exceptions.
-            bool errors_critical;
+        // Whether errors should throw unhandled exceptions.
+        bool errors_critical;
 
-            // The following private methods are used to interface with the
-            // implementation class.
-            
-            /**
-             * This method registers a container of a specified type and returns
-             * its id token.
-             * 
-             * @param {ArgType} type The type of option in the container.
-             * @param {Container*} container The container being registered.
-             */
-            token registerContainer(ArgType type, Container* container);
-
-            /**
-             * This method sets the error description to the message provided.
-             * 
-             * @param {std::string} message The error message.
-             */
-            void setError(const std::string& message);
-
+        // A method to call if an error occurs.
+        ErrorHandler error_callback;
+        
         public:
             Parser();
-            Parser(bool autohelp, bool errors_critical = false);
+            Parser(bool autohelp, ErrorHandler error_callback);
             Parser(const Parser& other);        // Copy constructor.
             Parser(Parser&& other);             // Move constructor.
             Parser& operator=(Parser other);    // Assignment operator
@@ -55,6 +38,7 @@ namespace ArgsParser
 
             friend void swap(Parser& first, Parser& second);
 
+            const int& error_code;
             const std::string& error_description;
 
             /**
@@ -63,14 +47,14 @@ namespace ArgsParser
              * @param {std::string} symbol The symbol to search for.
              * @return {bool} True if symbol is registered. False otherwise.
              */
-            bool isRegistered(const std::string& symbol) const;
+            Token isRegistered(const std::string& symbol) const;
 
             /**
              * This method returns whether a name is registered to the parser.
              * @param {std::string} name The name to search for.
              * @return {bool} True if name is registered. False otherwise.
              */
-            bool isNameRegistered(const std::string& name) const;
+            Token isNameRegistered(const std::string& name) const;
 
             /**
              * This method returns whether an identifier is registered to the 
@@ -78,7 +62,7 @@ namespace ArgsParser
              * @param {std::string} identifier The identifier to search for.
              * @return {bool} True if the identifier is registered. False otherwise.
              */
-            bool isIdentifierRegistered(const std::string& identifier) const;
+            Token isIdentifierRegistered(const std::string& identifier) const;
 
             /**
              * This method register a positional argument to the parser. Usage example:
@@ -105,16 +89,16 @@ namespace ArgsParser
              * @param {Converter} converter The converter method to use for converting string input to type T.
              * @param {Callback} error_callback A method to call in case validation fails.
              * @param {Callback} callback A method to call in case validation succeeds.
-             * @return {token} The token to retrieve the argument value by Id.
+             * @return {Token} The token to retrieve the argument value by Id.
              * @except {std::runtime_error} Registration failure.
              */
             template <typename T>
-            token registerPositional(
+            Token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
                 const Validator& validator = nullptr,
                 const Converter<T>& converter = nullptr,
-                const Callback& error_callback = nullptr,
+                const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
                 try{
@@ -134,7 +118,7 @@ namespace ArgsParser
                         callback
                     );
 
-                    token id = registerContainer(ArgType::Positional, container);
+                    Token id = registerContainer(ArgType::Positional, container);
 
                     return id;
                 }
@@ -147,11 +131,11 @@ namespace ArgsParser
                     return NULL_TOKEN;
                 }
             }
-            token registerPositional(
+            Token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
                 const Validator& validator = nullptr,
-                const Callback& error_callback = nullptr,
+                const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
                 return registerPositional<std::string>(
@@ -185,10 +169,10 @@ namespace ArgsParser
              * @param {std::vector<std::string>} identifiers The identifiers to register with this option.
              * @param {std::string} description The description of the option to use for help text.
              * @param {Callback} callback A function to call upon encountering this switch.
-             * @return {token} The token to retrieve the argument value by Id.
+             * @return {Token} The token to retrieve the argument value by Id.
              * @except {std::runtime_error} Registration failure.
              */
-            token registerSwitch(
+            Token registerSwitch(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& description = "Description not given.",
@@ -221,11 +205,11 @@ namespace ArgsParser
              * @param {Converter} converter The converter method to use for converting string input to type T.
              * @param {Callback} error_callback A function to call if validation fails.
              * @param {Callback} callback A function to be called if validation succeeds.
-             * @return {token} The token to retrieve the argument value by Id.
+             * @return {Token} The token to retrieve the argument value by Id.
              * @except {std::runtime_error} Registration failure.
              */
             template <typename T>
-            token registerOption(
+            Token registerOption(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& placeholder_text = "value",
@@ -234,7 +218,7 @@ namespace ArgsParser
                 const size_t min_values = 1,
                 const Validator& validator = nullptr,
                 const Converter<T>& converter = nullptr,
-                const Callback& error_callback = nullptr,
+                const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
                 try{
@@ -264,7 +248,7 @@ namespace ArgsParser
                     );
 
                     // And push the container to the array of registered options.
-                    token id = registerContainer(ArgType::Option, container);
+                    Token id = registerContainer(ArgType::Option, container);
 
                     return id;
                 }
@@ -277,7 +261,7 @@ namespace ArgsParser
                     return NULL_TOKEN;
                 }
             }
-            token registerOption(
+            Token registerOption(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
                 const std::string& placeholder_text = "value",
@@ -285,7 +269,7 @@ namespace ArgsParser
                 const size_t max_values = 1,
                 const size_t min_values = 1,
                 const Validator& validator = nullptr,
-                const Callback& error_callback = nullptr,
+                const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
                 return registerOption<std::string>(
@@ -305,9 +289,9 @@ namespace ArgsParser
             /**
              * This method returns a vector of all tokens that have been
              * registered to the parser.
-             * @return {std::vector<token>} The list of registered tokens.
+             * @return {std::vector<Token>} The list of registered tokens.
              */
-            std::vector<token> getRegisteredTokens() const;
+            std::vector<Token> getRegisteredTokens() const;
 
             /**
              * This method returns a vector of all names that have been
@@ -318,10 +302,10 @@ namespace ArgsParser
 
             /**
              * This method gets a registered container by it's token.
-             * @param {token} The registration token.
+             * @param {Token} The registration token.
              * @return {Container} The container.
              */
-            std::unique_ptr<Container> getContainerByToken(token token) const;
+            std::unique_ptr<Container> getContainerByToken(Token token) const;
 
             /**
              * This method gets the program name (either as provided by the user
@@ -348,5 +332,41 @@ namespace ArgsParser
              * @return {bool} Whether autohelp was enabled successfully.
              */
             bool enableAutohelp();
+
+            /**
+             * This method parses argv.
+             * @param {int} argc The argument count.
+             * @param {char**} argv The argument vector.
+             */
+            void Parse(int argc, char* argv[]);
+
+        private:
+            // The following private methods are used to interface with the
+            // implementation class.
+            
+            /**
+             * This method registers a container of a specified type and returns
+             * its id token.
+             * 
+             * @param {ArgType} type The type of option in the container.
+             * @param {Container*} container The container being registered.
+             */
+            Token registerContainer(ArgType type, Container* container);
+
+            /**
+             * This method sets the error description to the message provided.
+             * 
+             * @param {std::string} message The error message.
+             */
+            void setError(const std::string& message);
+
+            /**
+             * This method sets the container represented by a token to active and
+             * optionally assigns it a user input parameter.
+             * 
+             * @param {Token} token The token that identifies the option.
+             * @param {std::string} user_input The user input data.
+             */
+            void setActive(const Token token, const std::string& user_input = nullptr);
     };
 }
