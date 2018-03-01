@@ -21,15 +21,6 @@ namespace ArgsParser
      * memory footprint.
      */
     class Container{
-        protected:
-            const std::string name_;
-            const std::string description_;
-            const std::vector<std::string> identifiers_;
-            const Callback callback_;
-            const ArgType type_;
-
-            bool active_;
-
         public:
             /**
              * This method retrieves the name assigned to this container.
@@ -89,6 +80,20 @@ namespace ArgsParser
              * @return {Container*} A pointer to a new Container object cloned from this object.
              */
             virtual Container* clone() const;
+
+        protected:
+            const std::string name_;
+            const std::string description_;
+            const std::vector<std::string> identifiers_;
+            const Callback callback_;
+            const ArgType type_;
+
+            bool active_;
+
+            friend class Parser;
+
+            void setActive();
+
     };
 
 
@@ -129,7 +134,7 @@ namespace ArgsParser
                 const std::string& description = "",
                 const std::string& placeholder_text = "",
                 const Validator& validator = nullptr,
-                const Callback& error_callback = nullptr,
+                const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             );
 
@@ -151,10 +156,13 @@ namespace ArgsParser
             std::string user_input_;
 
             const Validator validator_;
-            const Callback error_callback_;
+            const ErrorHandler error_callback_;
 
             bool validation_;
             std::string validation_failure_reason_;
+
+            friend class Parser;
+            void setActive(const std::string& user_input);
     };
 
     /**
@@ -187,7 +195,7 @@ namespace ArgsParser
                 const std::string& placeholder_text = "",
                 const Validator& validator = nullptr,
                 const Converter<T>& converter = nullptr,
-                const Callback& error_callback = nullptr,
+                const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ) : UserInputContainer(
                     type,
@@ -236,5 +244,7 @@ namespace ArgsParser
             T converted_value_;
 
             const Converter<T> converter_;     
+
+            friend class Parser;
     };
 }

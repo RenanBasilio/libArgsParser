@@ -33,12 +33,26 @@ namespace ArgsParser
      * in the parser. These can be used to more quickly retrieve registered
      * itemby skipping the hashing and lookup processes associated with stl
      * maps.
-     * 
-     * A token of 00000000 is referred to as a null token and represents an
-     * invalid or otherwise unsuccessful registration.
      */
-    typedef std::pair<ArgType, unsigned short int> token;
-    const token NULL_TOKEN = std::make_pair<ArgType, unsigned short int>(ArgType::Null, 0);
+    struct Token
+    {
+        ArgType type;
+        unsigned short position;
+
+        operator bool() const{
+            return (type != ArgType::Null);
+        };
+
+        bool operator==(const Token& other) const{
+            return (other.type == type && other.position == position);
+        }
+
+        Token operator||(const Token& other) const{
+            const Token& token = this? *this : other;
+            return token;
+        }
+    };
+    const Token NULL_TOKEN = {ArgType::Null, 0};
 
     /**
      * This is the declaration of a validator function.
@@ -71,6 +85,15 @@ namespace ArgsParser
      * Some sample callback methods are defined in samples/callbacks.h
      */
     using Callback = std::function<void()>;
+
+    /**
+     * This is the declaration of an error handler function.
+     * 
+     * Error handlers are called alternatively to callback methods in case of an
+     * error. They are provided the error code and description string related to
+     * the error that occurred.
+     */
+    using ErrorHandler = std::function<void(const int, const std::string&)>;
 
     /**
      * This is the declaration of a converter function.

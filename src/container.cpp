@@ -47,7 +47,7 @@ namespace ArgsParser
         const std::string& description,
         const std::string& placeholder_text,
         const Validator& validator,
-        const Callback& error_callback,
+        const ErrorHandler& error_callback,
         const Callback& callback
     ) : Container(type, name, identifiers, description, callback),
         placeholder_text_(placeholder_text),
@@ -97,6 +97,10 @@ namespace ArgsParser
     bool Container::isActive() const{
         return active_;
     };
+
+    void Container::setActive(){
+        active_ = true;
+    }
 
     std::string UserInputContainer::getPlaceholderText() const{
         return placeholder_text_;
