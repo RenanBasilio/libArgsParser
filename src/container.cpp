@@ -102,6 +102,18 @@ namespace ArgsParser
         active_ = true;
     }
 
+    std::string Container::getPlaceholderText() const{
+        return "";
+    }
+
+    std::string Container::getUserInput() const{
+        return "";
+    }
+
+    ValueWrapper Container::getValue() const{
+        return {"", active_};
+    }
+
     std::string UserInputContainer::getPlaceholderText() const{
         return placeholder_text_;
     };
@@ -110,13 +122,11 @@ namespace ArgsParser
         return user_input_;
     };
 
+    ValueWrapper UserInputContainer::getValue() const{
+        return {user_input_, active_};
+    }
+
     std::pair<bool, std::string> UserInputContainer::getValidation() const{
         return std::make_pair(validation_, validation_failure_reason_);
-    };
-
-    template<>
-    std::string TypedInputContainer<std::string>::getValue() const{
-        if (converter_ != nullptr) return converted_value_;
-        else return user_input_;
     };
 }

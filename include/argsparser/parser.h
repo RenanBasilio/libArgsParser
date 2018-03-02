@@ -38,11 +38,35 @@ namespace ArgsParser
 
             friend void swap(Parser& first, Parser& second);
 
+            // Accessor Operators
+            ValueWrapper operator[](const std::string& name) const;
+            ValueWrapper operator[](const Token& token) const;
+            template <typename T> T operator[](const std::string& name) const
+            {
+                return getValue<T>(name);
+            };
+            template <typename T> T operator[](const Token& token) const
+            {
+                return getValue<T>(token);
+            };
+
+            ValueWrapper getValue(const std::string& name) const;
+            ValueWrapper getValue(const Token& token) const;
+            template <typename T> T getValue(const std::string& name) const
+            {
+                return getValue<T>(isRegistered(name));
+            };
+            template <typename T> T getValue(const Token& token) const
+            {
+                UserInputContainer* container = dynamic_cast<UserInputContainer*>(getContainerByToken(isRegistered(name)));
+                return container->getConvertedValue();
+            };
+
             const int& error_code;
             const std::string& error_description;
 
             /**
-             * This method returns whetehr a name or identifier is registered to 
+             * This method returns whether a name or identifier is registered to 
              * the parser.
              * @param {std::string} symbol The symbol to search for.
              * @return {bool} True if symbol is registered. False otherwise.
@@ -303,9 +327,10 @@ namespace ArgsParser
             /**
              * This method gets a registered container by it's token.
              * @param {Token} The registration token.
-             * @return {Container} The container.
+             * @return {Container*} The container.
              */
-            std::unique_ptr<Container> getContainerByToken(Token token) const;
+            const Container* getContainer(const std::string& name) const;
+            const Container* getContainer(const Token& token) const;
 
             /**
              * This method gets the program name (either as provided by the user

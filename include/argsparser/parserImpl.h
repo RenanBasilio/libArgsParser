@@ -50,6 +50,13 @@ namespace ArgsParser
          * @param {std::string} identifier The identifier for which to retrieve the container.
          * @return {Token} The token corresponding to identifier.
          */
-        Token getTokenById(const std::string& identifier);
+        Token getToken(const std::string& identifier) const;
+
+        /**
+         * This method gets a registered container by it's token.
+         * @param {Token} The registration token.
+         * @return {Container*} The container.
+         */
+        Container* getContainer(const Token& token) const;
     };
 }
