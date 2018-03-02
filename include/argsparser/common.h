@@ -48,7 +48,7 @@ namespace ArgsParser
         }
 
         Token operator||(const Token& other) const{
-            const Token& token = this? *this : other;
+            const Token& token = type != ArgType::Null? *this : other;
             return token;
         }
     };
