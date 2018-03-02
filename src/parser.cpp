@@ -171,21 +171,21 @@ namespace ArgsParser
         case ArgType::Positional:
             if (parser_impl->registered_positionals.size() == (std::numeric_limits<unsigned short>::max()))
                 throw new std::runtime_error("Exceeded maximum number of same type options (>" 
-                    + std::numeric_limits<unsigned short>::max() + std::string(")."));
+                    + std::to_string(std::numeric_limits<unsigned short>::max()) + std::string(")."));
             index = parser_impl->registered_positionals.size();
             parser_impl->registered_positionals.push_back(container);
             break;
         case ArgType::Option:
             if (parser_impl->registered_options.size() == (std::numeric_limits<unsigned short>::max()))
                 throw new std::runtime_error("Exceeded maximum number of same type options (>" 
-                    + std::numeric_limits<unsigned short>::max() + std::string(")."));
+                    + std::to_string(std::numeric_limits<unsigned short>::max()) + std::string(")."));
             index = parser_impl->registered_options.size();
             parser_impl->registered_options.push_back(container);
             break;
         case ArgType::Switch:
             if (parser_impl->registered_switches.size() == (std::numeric_limits<unsigned short>::max()))
                 throw new std::runtime_error("Exceeded maximum number of same type options (>" 
-                    + std::numeric_limits<unsigned short>::max() + std::string(")."));
+                    + std::to_string(std::numeric_limits<unsigned short>::max()) + std::string(")."));
             index = parser_impl->registered_switches.size();
             parser_impl->registered_switches.push_back(container);
             break;
