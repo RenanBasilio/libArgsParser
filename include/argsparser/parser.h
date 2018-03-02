@@ -62,7 +62,7 @@ namespace ArgsParser
                 return container->getConvertedValue();
             };
 
-            const int& error_code;
+            const unsigned short& error_code;
             const std::string& error_description;
 
             /**
