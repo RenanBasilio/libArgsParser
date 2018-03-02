@@ -14,6 +14,16 @@
 
 namespace ArgsParser
 {
+    struct ValueWrapper
+    {
+        std::string user_input;
+        bool active;
+
+        operator bool() {return active;};
+        operator std::string() {return user_input;};
+        operator const char*() {return user_input.c_str();};
+    };
+
     /**
      * This template base class is used to store basic information about an
      * argument type to be parsed.
@@ -43,14 +53,11 @@ namespace ArgsParser
              */
             std::vector<std::string> getIdentifiers() const;
 
-            /**
-             * This pure virtual method provides the facilities for retrieving
-             * the placeholder text from a UserInputContainer through an object
-             * of type Container.
-             */
-            virtual std::string getPlaceholderText() const{
-                return "";
-            };
+            virtual std::string getPlaceholderText() const;
+
+            virtual ValueWrapper getValue() const;
+
+            virtual std::string getUserInput() const;
 
             /**
              * This method retrieves whether this container is active. This is
@@ -117,6 +124,8 @@ namespace ArgsParser
              */
             std::string getUserInput() const;
 
+            ValueWrapper getValue() const;
+
             /**
              * This method returns the validation state of the user input as a
              * pair, with the first element being whether the validation was
@@ -179,10 +188,7 @@ namespace ArgsParser
             /**
              * This method gets the converted value of the user input.
              */
-            T getValue() const{
-                if (converter_ != nullptr) return converted_value_;
-                else throw std::runtime_error("Warning: Converter undefined. To retrieve string input use getUserInput() instead.");
-            };
+            T getConvertedValue() const;
 
             /**
              * This is the constructor for the typed user input container.

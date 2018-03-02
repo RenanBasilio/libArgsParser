@@ -21,7 +21,7 @@ namespace ArgsParser
 
         for(Token var : tokens)
         {
-            std::unique_ptr<Container> container = parser.getContainerByToken(var); 
+            const Container* container = parser.getContainer(var);
 
             if(container->getType() == ArgType::Positional)
             {

@@ -38,7 +38,7 @@ namespace ArgsParser
     { 
         for(auto var : parser_impl->names)
         {
-            registerContainer(var.second.type, getContainerByToken(var.second).release());
+            registerContainer(var.second.type, getContainer(var.second)->clone());
         }
     }
 
@@ -230,33 +230,20 @@ namespace ArgsParser
         return names;
     }
 
-    std::unique_ptr<Container> Parser::getContainerByToken(Token token) const{
+    const Container* Parser::getContainer(const std::string& name) const{
+        return getContainer(isRegistered(name));
+    }
 
-        Container* result;
-        switch (token.type)
-        {
-            case ArgType::Option:
-                result = parser_impl->registered_options[token.position];
-                break;
-            case ArgType::Positional:
-                result = parser_impl->registered_positionals[token.position];
-                break;
-            case ArgType::Switch:
-                result = parser_impl->registered_switches[token.position];
-                break;
-            default:
-                throw std::runtime_error("NULL_TOKEN presented.");
-                break;
-        }
-        return std::unique_ptr<Container>(result->clone());
-    };
+    const Container* Parser::getContainer(const Token& token) const{
+        return const_cast<Container*>(parser_impl->getContainer(token));
+    }
 
     void Parser::Parse(int argc, char* argv[]){
         std::string program_name = std::string(argv[0]);
         program_name = program_name.substr(program_name.find_last_of("/\\"));
         if (getProgramName() == "") setProgramName(program_name);
 
-        std::unique_ptr<Container> container = nullptr;
+        Container* container = nullptr;
         int positional = 0;
         for (int i = 1; i < argc; i++)
         {
@@ -265,13 +252,48 @@ namespace ArgsParser
             if(current.at(0) == '-') // This is an option
             {
                 // Load the container for the option and set it to active.
-                container = getContainerByToken(isIdentifierRegistered(current));
+                container = parser_impl->getContainer(isIdentifierRegistered(current));
                 container->setActive();
             }
             else // This is a value
             {
 
             }
+        }
+    };
+
+    ValueWrapper Parser::operator[](const std::string& name) const{
+        return getValue(name);
+    };
+
+    ValueWrapper Parser::operator[](const Token& token) const{
+        return getValue(token);
+    };
+
+    ValueWrapper Parser::getValue(const std::string& name) const{
+        return getContainer(isRegistered(name))->getValue();
+    };
+
+    ValueWrapper Parser::getValue(const Token& token) const{
+        return getContainer(token)->getValue();
+    };
+
+    Container* Parser::ParserImpl::getContainer(const Token& token) const{
+
+        switch (token.type)
+        {
+            case ArgType::Option:
+                return registered_options[token.position];
+                break;
+            case ArgType::Positional:
+                return registered_positionals[token.position];
+                break;
+            case ArgType::Switch:
+                return registered_switches[token.position];
+                break;
+            default:
+                throw std::runtime_error("Container not found (NULL_TOKEN).");
+                break;
         }
     };
 }
