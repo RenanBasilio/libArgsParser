@@ -58,7 +58,7 @@ namespace ArgsParser
             };
             template <typename T> T getValue(const Token& token) const
             {
-                TypedInputContainer* container = dynamic_cast<TypedInputContainer*>(getContainer(token));
+                TypedInputContainer<T>* container = dynamic_cast<TypedInputContainer<T>*>(getContainer(token));
                 return container->getConvertedValue();
             };
 
