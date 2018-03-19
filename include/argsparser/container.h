@@ -16,12 +16,21 @@ namespace ArgsParser
 {
     struct ValueWrapper
     {
-        std::string user_input;
-        bool active;
+        const std::vector<std::string> user_input;
+        const bool active;
 
         operator bool() {return active;};
-        operator std::string() {return user_input;};
-        operator const char*() {return user_input.c_str();};
+        operator std::string(){
+            std::string fullStr = user_input[0];
+            for (size_t i = 1; i < user_input.size(); i++)
+            {
+                fullStr += user_input[i];
+            }
+            return fullStr;
+        };
+        std::string operator[](int position) {
+            return user_input.at(position);
+        }
     };
 
     /**
@@ -57,7 +66,7 @@ namespace ArgsParser
 
             virtual ValueWrapper getValue() const;
 
-            virtual std::string getUserInput() const;
+            virtual std::vector<std::string> getUserInput() const;
 
             /**
              * This method retrieves whether this container is active. This is
@@ -122,7 +131,7 @@ namespace ArgsParser
              * This method retrieves user input how it was parsed from the
              * command line. Only string conversion is performed.
              */
-            std::string getUserInput() const;
+            std::vector<std::string> getUserInput() const;
 
             ValueWrapper getValue() const;
 
@@ -142,6 +151,7 @@ namespace ArgsParser
                 const std::vector<std::string>& identifiers,
                 const std::string& description = "",
                 const std::string& placeholder_text = "",
+                const size_t max_values = 1,
                 const Validator& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
@@ -161,8 +171,10 @@ namespace ArgsParser
 
 
         protected:
+            const size_t max_values_;
+
             std::string placeholder_text_;
-            std::string user_input_;
+            std::vector<std::string> user_input_;
 
             const Validator validator_;
             const ErrorHandler error_callback_;
@@ -199,6 +211,7 @@ namespace ArgsParser
                 const std::vector<std::string>& identifiers,
                 const std::string& description = "",
                 const std::string& placeholder_text = "",
+                const size_t max_values = 1,
                 const Validator& validator = nullptr,
                 const Converter<T>& converter = nullptr,
                 const ErrorHandler& error_callback = nullptr,
@@ -208,7 +221,8 @@ namespace ArgsParser
                     name, 
                     identifiers,
                     description,
-                    placeholder_text, 
+                    placeholder_text,
+                    max_values,
                     validator,
                     error_callback,
                     callback
@@ -229,6 +243,7 @@ namespace ArgsParser
                     identifiers_,
                     description_,
                     placeholder_text_,
+                    max_values_,
                     validator_,
                     converter_,
                     error_callback_,

@@ -137,6 +137,7 @@ namespace ArgsParser
                         std::vector<std::string>(),
                         "",
                         placeholder_text,
+                        1,
                         validator,
                         converter,
                         error_callback,
@@ -240,7 +241,6 @@ namespace ArgsParser
                 const std::string& placeholder_text = "value",
                 const std::string& description = "Description not given.",
                 const size_t max_values = 1,
-                const size_t min_values = 1,
                 const Validator& validator = nullptr,
                 const Converter<T>& converter = nullptr,
                 const ErrorHandler& error_callback = nullptr,
@@ -266,6 +266,7 @@ namespace ArgsParser
                         identifiers_,
                         description,
                         placeholder_text,
+                        max_values,
                         validator,
                         converter,
                         error_callback,
@@ -292,7 +293,6 @@ namespace ArgsParser
                 const std::string& placeholder_text = "value",
                 const std::string& description = "Description not given.",
                 const size_t max_values = 1,
-                const size_t min_values = 1,
                 const Validator& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
@@ -303,7 +303,6 @@ namespace ArgsParser
                     placeholder_text,
                     description,
                     max_values,
-                    min_values,
                     validator,
                     nullptr,
                     error_callback,
@@ -364,7 +363,7 @@ namespace ArgsParser
              * @param {int} argc The argument count.
              * @param {char**} argv The argument vector.
              */
-            void Parse(int argc, char* argv[]);
+            void parse(int argc, char* argv[]);
 
             /**
              * This method outputs usage help text to the provided stream (which is

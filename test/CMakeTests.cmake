@@ -10,7 +10,7 @@ set(TEST_EXE ArgsParserTest)
 add_executable(${TEST_EXE} test/main.cpp)
 target_link_libraries(${TEST_EXE} ${LIB_NAME})
 
-add_test( ParserRuns ${TEST_EXE} "")
+add_test( ParserRuns ${TEST_EXE} )
 
 add_regex_test( RegistrationSucceeds "" "REG_TEST Registration successful for name \"test\".")
 add_regex_test( QuickRegistrationSucceeds "" "QREG_TEST Registration successful for name \"nmid\".")

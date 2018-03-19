@@ -13,13 +13,13 @@ int main(int argc, char* argv[]){
     testParser.enableAutohelp();
 
     // Value Registration Test
-    testParser.registerOption("test", {"-t", "--test"}, "value", "A test option.", 1, 1, nullptr, nullptr);
+    testParser.registerOption("test", {"-t", "--test"}, "value", "A test option.", 1, nullptr, nullptr);
     std::cout << "REG_TEST " << (testParser.isRegistered("test") ? "Registration successful for name \"test\"." : testParser.error_description) << std::endl;
     testParser.registerOption<std::string>("nmid", {"-name", "--id"});
     std::cout << "QREG_TEST " << (testParser.isRegistered("nmid") ? "Registration successful for name \"nmid\"." : testParser.error_description) << std::endl;
 
     // Duplicate Value Registration Test
-    testParser.registerOption("test", {"tt", "testfail"}, "value", "A duplicate test option.", 1, 1, nullptr, nullptr, nullptr);
+    testParser.registerOption("test", {"tt", "testfail"}, "value", "A duplicate test option.", 1, nullptr, nullptr, nullptr);
     std::cout << "DUPREG_TEST_1 " << testParser.error_description << std::endl;
     testParser.registerOption<std::string>("duptest", {"--t", "-test"}, "value", "A duplicate test option.");
     std::cout << "DUPREG_TEST_2 " << testParser.error_description << std::endl;
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]){
     // Invalid Value Registration Test
     testParser.registerOption("invalid test", {"!t", "invalid-test"}, "value", "A registration failure test.");
     std::cout << "INVREG_TEST_1 " << testParser.error_description << std::endl;
-    testParser.registerOption<std::string>("invalid test 2", {"tt", "invalid-test-"},  "value", "A registration failure test.", 1, 1, nullptr, nullptr);
+    testParser.registerOption<std::string>("invalid test 2", {"tt", "invalid-test-"},  "value", "A registration failure test.", 1, nullptr, nullptr);
     std::cout << "INVREG_TEST_2 " << testParser.error_description << std::endl;
 
     // Lambda Expression Registration Test
@@ -44,12 +44,14 @@ int main(int argc, char* argv[]){
         "value",
         "Test registration of a lambda expression converter with additional parameters.",
         1,
-        1,
         [](std::string input){if(input.size() > 5 || std::stoi(input)) return false; else return true; },
         [](std::string input)->int{return std::stoi(input);},
         [testParser](int, std::string){std::cout << "Conversion to int failed: " << testParser.error_description << std::endl;},
         [&success_message](){print_string(success_message);}
     );
+    std::cout << "LAMBDA_REG_TEST " << testParser.error_description << std::endl;
+    
+    testParser.parse(argc, argv);
     testParser.autohelper(testParser);
     std::cout << "Debug";
 
