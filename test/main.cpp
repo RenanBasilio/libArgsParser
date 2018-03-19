@@ -50,7 +50,7 @@ int main(int argc, char* argv[]){
         [testParser](int, std::string){std::cout << "Conversion to int failed: " << testParser.error_description << std::endl;},
         [&success_message](){print_string(success_message);}
     );
-    ArgsParser::autohelper(testParser);
+    testParser.autohelper(testParser);
     std::cout << "Debug";
 
     return 0;

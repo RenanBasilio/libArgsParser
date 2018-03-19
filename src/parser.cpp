@@ -109,26 +109,6 @@ namespace ArgsParser
         return parser_impl->identifiers.count(identifier_) > 0? parser_impl->identifiers[identifier_] : NULL_TOKEN;
     }
 
-    bool Parser::enableAutohelp(){
-        try{
-            // First test if both switches and the name are available.
-            // As there is a distinct possibility of this method being the first
-            // to register anything, we can speed up this test by checking if
-            // nothing has been registered yet.
-            if (parser_impl->names.size() == 0 || 
-               ( !isNameRegistered("help") && !isIdentifierRegistered("-h") && !isIdentifierRegistered("--help")))
-            {
-                // To-Do: Register help container.
-                return true;
-            }
-            else throw std::runtime_error("Autohelp failure: A keyword is already registered.");
-        }
-        catch (const std::exception& e){
-            parser_impl->error_description = e.what();
-            return false;
-        }
-    }
-
     Token Parser::registerSwitch(
         const std::string& name,
         const std::vector<std::string>& identifiers,

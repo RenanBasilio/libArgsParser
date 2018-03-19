@@ -7,11 +7,31 @@
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
 
-#include <argsparser/autohelp.h>
+#include <argsparser/parserImpl.h>
 
 namespace ArgsParser
 {
-    void autohelper(const Parser& parser, std::ostream& stream){
+    bool Parser::enableAutohelp(){
+        try{
+            // First test if both switches and the name are available.
+            // As there is a distinct possibility of this method being the first
+            // to register anything, we can speed up this test by checking if
+            // nothing has been registered yet.
+            if (parser_impl->names.size() == 0 || 
+               ( !isNameRegistered("help") && !isIdentifierRegistered("-h") && !isIdentifierRegistered("--help")))
+            {
+                // To-Do: Register help container.
+                return true;
+            }
+            else throw std::runtime_error("Autohelp failure: A keyword is already registered.");
+        }
+        catch (const std::exception& e){
+            parser_impl->error_description = e.what();
+            return false;
+        }
+    }
+
+    void Parser::autohelper(const Parser& parser, std::ostream& stream){
 
         std::vector<Token> tokens = parser.getRegisteredTokens();
         std::vector<std::string> positional_strings;
