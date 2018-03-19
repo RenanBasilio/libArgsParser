@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include <limits>
+#include <iostream>
 #include <argsparser/container.h>
 
 namespace ArgsParser
@@ -364,6 +365,21 @@ namespace ArgsParser
              * @param {char**} argv The argument vector.
              */
             void Parse(int argc, char* argv[]);
+
+            /**
+             * This method outputs usage help text to the provided stream (which is
+             * the standard output stream "std::cout" by default) in the following
+             * form:
+             *      usage: ${program_name} [<positional>] ... [<args>]
+             *          -s, --switch                        ${switch_description}
+             *          ...
+             * 
+             *      options
+             *          -o, --option                        ${option_description}
+             *          -p, --value-option <placeholder>    ${value_option_description}
+             *          ...
+             */
+            void autohelper(const Parser& parser, std::ostream& stream = std::cout);
 
         private:
             // The following private methods are used to interface with the
