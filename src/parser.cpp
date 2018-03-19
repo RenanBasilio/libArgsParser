@@ -218,12 +218,14 @@ namespace ArgsParser
         return const_cast<Container*>(parser_impl->getContainer(token));
     }
 
-    void Parser::Parse(int argc, char* argv[]){
+    void Parser::parse(int argc, char* argv[]){
+        std::cout << "1";
         std::string program_name = std::string(argv[0]);
-        program_name = program_name.substr(program_name.find_last_of("/\\"));
+        program_name = program_name.substr(program_name.find_last_of("/\\")+1);
         if (getProgramName() == "") setProgramName(program_name);
 
-        Container* container = nullptr;
+        std::cout << "2";
+        UserInputContainer* container = nullptr;
         int positional = 0;
         for (int i = 1; i < argc; i++)
         {
@@ -232,12 +234,29 @@ namespace ArgsParser
             if(current.at(0) == '-') // This is an option
             {
                 // Load the container for the option and set it to active.
-                container = parser_impl->getContainer(isIdentifierRegistered(current));
-                container->setActive();
+                Container* baseContainer = parser_impl->getContainer(isIdentifierRegistered(current));
+                baseContainer->setActive();
+                // If container is a switch, unload it
+                if(baseContainer->getType() == ArgType::Switch) container = nullptr;
+                // Otherwise, it will be followed by its value, so cast it to an input container.
+                container = dynamic_cast<UserInputContainer*>(container);
             }
             else // This is a value
             {
+                // If there is no current container, this is a positional, so load the container.
+                if(container == nullptr) parser_impl->getContainer({ArgType::Positional, (unsigned short)positional});
+                else
+                {
+                    // Append the current input to input in the container.
+                    container->user_input_.push_back(current);
 
+                    // If the current container is a positional argument, increment the positional counter and unload it.
+                    if(container->getType() == ArgType::Positional)
+                    {
+                        positional++;
+                        container = nullptr;
+                    }
+                }
             }
         }
     };
@@ -259,21 +278,27 @@ namespace ArgsParser
     };
 
     Container* Parser::ParserImpl::getContainer(const Token& token) const{
-
-        switch (token.type)
+        try
         {
-            case ArgType::Option:
-                return registered_options[token.position];
-                break;
-            case ArgType::Positional:
-                return registered_positionals[token.position];
-                break;
-            case ArgType::Switch:
-                return registered_switches[token.position];
-                break;
-            default:
-                throw std::runtime_error("Container not found (NULL_TOKEN).");
-                break;
+            switch (token.type)
+            {
+                case ArgType::Option:
+                    return registered_options.at(token.position);
+                    break;
+                case ArgType::Positional:
+                    return registered_positionals.at(token.position);
+                    break;
+                case ArgType::Switch:
+                    return registered_switches.at(token.position);
+                    break;
+                default:
+                    throw std::runtime_error("Container not found (NULL_TOKEN).");
+                    break;
+            }      
+        }
+        catch (const std::out_of_range&)
+        {
+            return nullptr;
         }
     };
 }
