@@ -28,6 +28,7 @@ set(
     src/Container.cpp
     src/Parser.cpp
     src/UserInputContainer.cpp
+    src/ValueWrapper.cpp
     src/Util.cpp
 )
 
@@ -38,6 +39,7 @@ set(
     include/argsparser/common.h
     include/argsparser/container.h
     include/argsparser/parser.h
+    include/argsparser/valuewrapper.h
     include/argsparser/util.h
 )
 
