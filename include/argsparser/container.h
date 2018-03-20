@@ -143,7 +143,7 @@ namespace ArgsParser
              * This method returns the maximum number of independent inputs that this
              * container can hold.
              */
-            size_t getMaxInputSize();
+            size_t getMaxInputs();
 
             ValueWrapper getValue() const;
 

@@ -134,7 +134,7 @@ namespace ArgsParser
         return user_input_.size();
     }
 
-    size_t UserInputContainer::getMaxInputSize(){
+    size_t UserInputContainer::getMaxInputs(){
         return max_values_;
     }
 
