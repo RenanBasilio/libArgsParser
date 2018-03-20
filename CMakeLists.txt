@@ -24,15 +24,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(
     SOURCE_FILES 
-    src/autohelp.cpp
-    src/container.cpp
-    src/parser.cpp
-    src/util.cpp
+    src/Autohelp.cpp
+    src/Container.cpp
+    src/Parser.cpp
+    src/UserInputContainer.cpp
+    src/Util.cpp
 )
 
 set(
     HEADER_FILES 
     include/argsparser.h
+    include/argsparser/autohelp.h
     include/argsparser/common.h
     include/argsparser/container.h
     include/argsparser/parser.h
