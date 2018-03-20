@@ -12,4 +12,5 @@
 #include <argsparser/common.h>
 #include <argsparser/container.h>
 #include <argsparser/parser.h>
+#include <argsparser/value_wrapper.h>
 #include <argsparser/util.h>

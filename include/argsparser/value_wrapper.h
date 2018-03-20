@@ -1,5 +1,5 @@
 /**
- * valuewrapper.h
+ * value_wrapper.h
  * 
  * This file contains the declaration of the ValueWrapper struct, a  utility
  * class that is implicitly convertible to bool or string for returning
@@ -8,6 +8,7 @@
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
 
+#pragma once
 #include <common.h>
 
 namespace ArgsParser

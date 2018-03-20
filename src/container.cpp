@@ -62,17 +62,5 @@ namespace ArgsParser
 
     void Container::setActive(){
         active_ = true;
-    }
-
-    std::string Container::getPlaceholderText() const{
-        return "";
-    }
-
-    std::vector<std::string> Container::getUserInput() const{
-        return {""};
-    }
-
-    ValueWrapper Container::getValue() const{
-        return {{""}, active_};
-    }
+    };
 }
