@@ -24,12 +24,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(
     SOURCE_FILES 
-    src/Autohelp.cpp
-    src/Container.cpp
-    src/Parser.cpp
-    src/UserInputContainer.cpp
-    src/ValueWrapper.cpp
-    src/Util.cpp
+    src/autohelp.cpp
+    src/container.cpp
+    src/parser.cpp
+    src/user_input_container.cpp
+    src/value_wrapper.cpp
+    src/util.cpp
 )
 
 set(
@@ -39,7 +39,7 @@ set(
     include/argsparser/common.h
     include/argsparser/container.h
     include/argsparser/parser.h
-    include/argsparser/valuewrapper.h
+    include/argsparser/value_wrapper.h
     include/argsparser/util.h
 )
 

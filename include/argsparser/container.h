@@ -10,7 +10,7 @@
 #pragma once
 
 #include <algorithm>
-#include <argsparser/valuewrapper.h>
+#include <argsparser/value_wrapper.h>
 #include <argsparser/util.h>
 
 namespace ArgsParser
@@ -43,12 +43,6 @@ namespace ArgsParser
              * container.
              */
             std::vector<std::string> getIdentifiers() const;
-
-            virtual std::string getPlaceholderText() const;
-
-            virtual ValueWrapper getValue() const;
-
-            virtual std::vector<std::string> getUserInput() const;
 
             /**
              * This method retrieves whether this container is active. This is

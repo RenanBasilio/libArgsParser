@@ -26,7 +26,7 @@ namespace ArgsParser
 
             if(container->getType() == ArgType::Positional)
             {
-                positional_strings.push_back(container->getPlaceholderText());
+                positional_strings.push_back(dynamic_cast<const UserInputContainer*>(container)->getPlaceholderText());
             }
             else
             {
@@ -39,7 +39,7 @@ namespace ArgsParser
                 if(container->getType() == ArgType::Switch) 
                     switch_strings.push_back(std::pair<std::string, std::string>(id_string, container->getDescription()));
                 else{
-                    id_string += " <" + container->getPlaceholderText() + ">";
+                    id_string += " <" + dynamic_cast<const UserInputContainer*>(container)->getPlaceholderText() + ">";
                     option_strings.push_back(std::pair<std::string, std::string>(id_string, container->getDescription()));
                 }
                 max_id_size = std::max(max_id_size, id_string.length()+4);

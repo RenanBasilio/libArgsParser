@@ -281,11 +281,13 @@ namespace ArgsParser
     };
 
     ValueWrapper Parser::getValue(const std::string& name) const{
-        return getContainer(isRegistered(name))->getValue();
+        return getValue(isRegistered(name));
     };
 
     ValueWrapper Parser::getValue(const Token& token) const{
-        return getContainer(token)->getValue();
+        const UserInputContainer* container = dynamic_cast<const UserInputContainer*>(getContainer(token));
+        if (container != nullptr) return container->getValue();
+        else return {{""}, container->isActive()};
     };
 
     Container* Parser::ParserImpl::getContainer(const Token& token) const{
