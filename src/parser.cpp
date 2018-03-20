@@ -249,7 +249,7 @@ namespace ArgsParser
                 {
                     // If this is a value option and the maximum amount of options have been loaded, throw an exception.
                     if(currentContainer->getType() == ArgType::Option && 
-                       currentContainer->getInputSize() == currentContainer->getMaxInputSize())
+                       currentContainer->getInputSize() == currentContainer->getMaxInputs())
                         throw std::runtime_error("Too many arguments to option " + currentContainer->getName());
 
                     // Append the current input to the container.
@@ -264,7 +264,7 @@ namespace ArgsParser
                     // Otherwise, it is an option, so unload it if it has read the maximum amount of inputs
                     else
                     {
-                        if(currentContainer->getInputSize() == currentContainer->getMaxInputSize()) 
+                        if(currentContainer->getInputSize() == currentContainer->getMaxInputs()) 
                             currentContainer = nullptr;
                     }
                 }
