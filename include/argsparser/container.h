@@ -133,6 +133,18 @@ namespace ArgsParser
              */
             std::vector<std::string> getUserInput() const;
 
+            /**
+             * This method returns the number of independent inputs parsed to this
+             * container.
+             */
+            size_t getInputSize();
+
+            /**
+             * This method returns the maximum number of independent inputs that this
+             * container can hold.
+             */
+            size_t getMaxInputSize();
+
             ValueWrapper getValue() const;
 
             /**

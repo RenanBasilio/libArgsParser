@@ -9,7 +9,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Debug/ArgsParserTest.exe",
-            "args": [" "],
+            "args": ["--lambdab", "1993", "-t", "test", "something something", "--id", "identifier01"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

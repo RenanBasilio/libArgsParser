@@ -125,6 +125,19 @@ namespace ArgsParser
         return user_input_;
     };
 
+    void UserInputContainer::setActive(const std::string& input){
+        if(!active_) Container::setActive();
+        user_input_.push_back(input);
+    }
+
+    size_t UserInputContainer::getInputSize(){
+        return user_input_.size();
+    }
+
+    size_t UserInputContainer::getMaxInputSize(){
+        return max_values_;
+    }
+
     ValueWrapper UserInputContainer::getValue() const{
         return {user_input_, active_};
     }

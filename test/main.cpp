@@ -13,7 +13,7 @@ int main(int argc, char* argv[]){
     testParser.enableAutohelp();
 
     // Value Registration Test
-    testParser.registerOption("test", {"-t", "--test"}, "value", "A test option.", 1, nullptr, nullptr);
+    testParser.registerOption("test", {"-t", "--test"}, "value", "A test option.", 2, nullptr, nullptr);
     std::cout << "REG_TEST " << (testParser.isRegistered("test") ? "Registration successful for name \"test\"." : testParser.error_description) << std::endl;
     testParser.registerOption<std::string>("nmid", {"-name", "--id"});
     std::cout << "QREG_TEST " << (testParser.isRegistered("nmid") ? "Registration successful for name \"nmid\"." : testParser.error_description) << std::endl;
@@ -52,7 +52,6 @@ int main(int argc, char* argv[]){
     std::cout << "LAMBDA_REG_TEST " << testParser.error_description << std::endl;
     
     testParser.parse(argc, argv);
-    testParser.autohelper(testParser);
     std::cout << "Debug";
 
     return 0;
