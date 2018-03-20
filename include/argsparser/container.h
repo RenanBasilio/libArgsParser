@@ -10,29 +10,11 @@
 #pragma once
 
 #include <algorithm>
+#include <argsparser/valuewrapper.h>
 #include <argsparser/util.h>
 
 namespace ArgsParser
 {
-    struct ValueWrapper
-    {
-        const std::vector<std::string> user_input;
-        const bool active;
-
-        operator bool() {return active;};
-        operator std::string(){
-            std::string fullStr = user_input[0];
-            for (size_t i = 1; i < user_input.size(); i++)
-            {
-                fullStr += user_input[i];
-            }
-            return fullStr;
-        };
-        std::string operator[](int position) {
-            return user_input.at(position);
-        }
-    };
-
     /**
      * This template base class is used to store basic information about an
      * argument type to be parsed.
