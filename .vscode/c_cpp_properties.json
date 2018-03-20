@@ -71,7 +71,7 @@
                     "${workspaceRoot}\\include"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": ""
+                "databaseFilename": "${workspaceRoot}/build/intellisense.db"
             }
         }
     ],

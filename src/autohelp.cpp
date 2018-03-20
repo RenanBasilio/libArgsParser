@@ -7,33 +7,14 @@
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
 
-#include <argsparser/parserImpl.h>
+#include <argsparser/autohelp.h>
 
 namespace ArgsParser
 {
-    bool Parser::enableAutohelp(){
-        try{
-            // First test if both switches and the name are available.
-            // As there is a distinct possibility of this method being the first
-            // to register anything, we can speed up this test by checking if
-            // nothing has been registered yet.
-            if (parser_impl->names.size() == 0 || 
-               ( !isNameRegistered("help") && !isIdentifierRegistered("-h") && !isIdentifierRegistered("--help")))
-            {
-                // To-Do: Register help container.
-                return true;
-            }
-            else throw std::runtime_error("Autohelp failure: A keyword is already registered.");
-        }
-        catch (const std::exception& e){
-            parser_impl->error_description = e.what();
-            return false;
-        }
-    }
 
-    void Parser::autohelper(const Parser& parser, std::ostream& stream){
+    void autohelper(Parser *const parser, std::ostream& stream){
 
-        std::vector<Token> tokens = parser.getRegisteredTokens();
+        std::vector<Token> tokens = parser->getRegisteredTokens();
         std::vector<std::string> positional_strings;
         std::vector<std::pair<std::string, std::string>> switch_strings;
         std::vector<std::pair<std::string, std::string>> option_strings;
@@ -41,7 +22,7 @@ namespace ArgsParser
 
         for(Token var : tokens)
         {
-            const Container* container = parser.getContainer(var);
+            const Container* container = parser->getContainer(var);
 
             if(container->getType() == ArgType::Positional)
             {
@@ -65,7 +46,7 @@ namespace ArgsParser
             }
         }
         
-        stream << "usage: " << parser.getProgramName() << " ";
+        stream << "usage: " << parser->getProgramName() << " ";
         for(size_t i = 0; i < positional_strings.size(); i++)
         {
             stream << "[" << positional_strings[i] << "] ";
@@ -89,4 +70,23 @@ namespace ArgsParser
                    << std::endl;
         }
     };
+
+    bool Parser::enableAutohelp(){
+        try{
+            // First test if both switches and the name are available.
+            // As there is a distinct possibility of this method being the first
+            // to register anything, we can speed up this test by checking if
+            // nothing has been registered yet.
+            if ( !isNameRegistered("help") && !isIdentifierRegistered("-h") && !isIdentifierRegistered("--help"))
+            {
+                registerSwitch("help", {"-h", "--help"}, "Display usage text.", [this](){autohelper(this, std::cout);});
+                return true;
+            }
+            else throw std::runtime_error("Autohelp failure: A keyword is already registered.");
+        }
+        catch (const std::exception& e){
+            setError(e.what());
+            return false;
+        }
+    }
 }

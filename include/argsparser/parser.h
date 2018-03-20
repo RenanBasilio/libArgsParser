@@ -27,7 +27,9 @@ namespace ArgsParser
         bool errors_critical;
 
         // A method to call if an error occurs.
-        ErrorHandler error_callback;
+        ErrorHandler error_callback = [](const int error_code, const std::string& error_message){
+            std::cerr << "Error " << error_code << ": " << error_message << std::endl;
+        };
         
         public:
             Parser();
@@ -364,21 +366,6 @@ namespace ArgsParser
              * @param {char**} argv The argument vector.
              */
             void parse(int argc, char* argv[]);
-
-            /**
-             * This method outputs usage help text to the provided stream (which is
-             * the standard output stream "std::cout" by default) in the following
-             * form:
-             *      usage: ${program_name} [<positional>] ... [<args>]
-             *          -s, --switch                        ${switch_description}
-             *          ...
-             * 
-             *      options
-             *          -o, --option                        ${option_description}
-             *          -p, --value-option <placeholder>    ${value_option_description}
-             *          ...
-             */
-            void autohelper(const Parser& parser, std::ostream& stream = std::cout);
 
         private:
             // The following private methods are used to interface with the
