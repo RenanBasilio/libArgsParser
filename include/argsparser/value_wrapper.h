@@ -16,7 +16,7 @@ namespace ArgsParser
     struct ValueWrapper
     {
         const std::vector<std::string> user_input;
-        const bool active = false;
+        const bool active;
 
         operator bool() const noexcept;
         
