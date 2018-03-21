@@ -7,9 +7,10 @@
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
 
-#include <argsparser/common.h>
+#include <string>
+#include <iostream>
 
-namespace ArgsParser
+namespace ArgsTools
 {
     /**
      * This method checks if an identifier is valid. That is, if the identifier
@@ -35,4 +36,12 @@ namespace ArgsParser
      * @except {std::runtime_error} String contains invalid characters.
      */
     std::string make_identifier(const std::string& string);
+
+    /**
+     * This method is an error handler that simply prints the e.what() of an
+     * exception object.
+     * 
+     * @param {std::exception&} e The exception to print.
+     */
+    void print_error(const std::exception& e);
 }

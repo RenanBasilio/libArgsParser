@@ -16,25 +16,24 @@ namespace ArgsParser
         parser_impl(new ParserImpl()),
         error_code(parser_impl->error_code),
         error_description(parser_impl->error_description),
-        errors_critical(true)
+        no_except_(true),
+        error_callback_(ArgsTools::print_error)
         { }
 
-    Parser::Parser(bool autohelp, ErrorHandler error_callback):
+    Parser::Parser(bool no_except, ErrorHandler error_callback):
         parser_impl(new ParserImpl()),
         error_code(parser_impl->error_code),
         error_description(parser_impl->error_description),
-        errors_critical(error_callback? false : true),
-        error_callback(error_callback)
-    {
-        if(autohelp) enableAutohelp();
-    }
+        no_except_(no_except),
+        error_callback_(no_except? error_callback : nullptr)
+        { }
 
     Parser::Parser(const Parser& other):
         parser_impl(new ParserImpl()),
         error_code(parser_impl->error_code),
         error_description(parser_impl->error_description),
-        errors_critical(other.errors_critical),
-        error_callback(other.error_callback)
+        no_except_(other.no_except_),
+        error_callback_(other.error_callback_)
     { 
         for(auto var : parser_impl->names)
         {
@@ -104,7 +103,7 @@ namespace ArgsParser
     Token Parser::isIdentifierRegistered(const std::string& identifier) const{
         // First check if this is a proper identifier. If not, make one.
         const std::string identifier_ = 
-            (check_identifier(identifier)? identifier : make_identifier(identifier));
+            (ArgsTools::check_identifier(identifier)? identifier : ArgsTools::make_identifier(identifier));
 
         return parser_impl->identifiers.count(identifier_) > 0? parser_impl->identifiers[identifier_] : NULL_TOKEN;
     }
@@ -122,7 +121,7 @@ namespace ArgsParser
         std::vector<std::string> identifiers_(identifiers.size());
         for(size_t i = 0; i < identifiers.size(); i++)
         {
-            identifiers_[i] = make_identifier(identifiers[i]);
+            identifiers_[i] = ArgsTools::make_identifier(identifiers[i]);
             if(isIdentifierRegistered(identifiers_[i]))
                 throw std::runtime_error( "Identifier \"" + identifiers_[i] + "\" is already registered." );
         }

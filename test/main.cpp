@@ -1,6 +1,6 @@
 #include <iostream>
 #include <argsparser.h>
-#include <unordered_map>
+#include <exception>
 
 void print_string(std::string string){
     std::cout << string << std::endl;
@@ -8,7 +8,7 @@ void print_string(std::string string){
 
 int main(int argc, char* argv[]){
     // Initialization Test
-    ArgsParser::Parser testParser = ArgsParser::Parser(false, [](int, std::string){});
+    ArgsParser::Parser testParser = ArgsParser::Parser();
     std::vector<std::string> argvector(argv+1, argv+argc);
     testParser.enableAutohelp();
 
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
         1,
         [](std::string input){if(input.size() > 5 || std::stoi(input)) return false; else return true; },
         [](std::string input)->int{return std::stoi(input);},
-        [testParser](int, std::string){std::cout << "Conversion to int failed: " << testParser.error_description << std::endl;},
+        [testParser](const std::exception& e){std::cout << "Conversion to int failed: " << e.what() << std::endl;},
         [&success_message](){print_string(success_message);}
     );
     std::cout << "LAMBDA_REG_TEST " << testParser.error_description << std::endl;

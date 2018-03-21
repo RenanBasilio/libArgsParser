@@ -13,6 +13,7 @@
 #include <vector>
 #include <exception>
 #include <functional>
+#include <iostream>
 
 namespace ArgsParser
 {
@@ -93,7 +94,7 @@ namespace ArgsParser
      * error. They are provided the error code and description string related to
      * the error that occurred.
      */
-    using ErrorHandler = std::function<void(const int, const std::string&)>;
+    using ErrorHandler = std::function<void(const std::exception&)>;
 
     /**
      * This is the declaration of a converter function.
