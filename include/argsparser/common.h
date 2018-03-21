@@ -73,7 +73,7 @@ namespace ArgsParser
      * 
      * Some sample validator methods are defined in samples/validators.h
      */
-    using Validator = std::function<bool(const std::string&)>;
+    template <typename T> using Validator = std::function<bool(const T&)>;
 
     /**
      * This is the declaration of a callback function. 
