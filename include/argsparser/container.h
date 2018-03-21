@@ -369,9 +369,10 @@ namespace ArgsParser
                     for (size_t i = 0; i < user_input_.size(); i++) {
                         try {
                             T input = converter_(user_input_[i]);
-                            bool valid = validator_(input);
-
-                            if (!valid) throw std::runtime_error("Unspecified validation error.");
+                            if (validator_ != nullptr) {
+                                bool valid = validator_(input);
+                                if (!valid) throw std::runtime_error("Unspecified validation error.");
+                            }
 
                             converted_value_.push_back(input);
                         }
