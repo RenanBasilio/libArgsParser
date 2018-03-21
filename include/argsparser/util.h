@@ -7,8 +7,11 @@
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
 
+#pragma once
+
 #include <string>
 #include <iostream>
+#include <stdexcept>
 #include <exception>
 
 namespace ArgsTools
