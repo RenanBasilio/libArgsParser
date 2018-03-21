@@ -17,7 +17,7 @@ namespace ArgsParser
         const std::string& description,
         const std::string& placeholder_text,
         const size_t max_values,
-        const Validator& validator,
+        const Validator<std::string>& validator,
         const ErrorHandler& error_callback,
         const Callback& callback
     ) : Container(type, name, identifiers, description, callback),
@@ -59,24 +59,45 @@ namespace ArgsParser
         return user_input_;
     };
 
-    void UserInputContainer::setActive(const std::string& input){
-        if(!active_) Container::setActive();
-        user_input_.push_back(input);
-    }
-
     size_t UserInputContainer::getInputSize(){
         return user_input_.size();
-    }
+    };
 
     size_t UserInputContainer::getMaxInputs(){
         return max_values_;
-    }
+    };
 
     ValueWrapper UserInputContainer::getValue() const{
         return {user_input_, active_};
-    }
+    };
 
     std::pair<bool, std::string> UserInputContainer::getValidation() const{
         return std::make_pair(validation_, validation_failure_reason_);
+    };
+
+    void UserInputContainer::setActive(const std::string& input){
+        if(!active_) Container::setActive();
+        user_input_.push_back(input);
+    };
+
+    void UserInputContainer::postProcess(){
+
+        if (validator_ != nullptr) {
+            for (size_t i = 0; i < user_input_.size(); i++) {
+                try{
+                    bool valid = validator_(user_input_[i]);
+                    if (!valid) throw std::runtime_error("Unspecified validation error.");
+                }
+                catch (std::exception& e) {
+                    validation_ = false;
+                    validation_failure_reason_ = e.what();
+                    
+                    if (error_callback_ != nullptr) error_callback_(e);
+                    return;
+                }
+            }
+        }
+        if (callback_ != nullptr) callback_();
+
     };
 }

@@ -63,4 +63,8 @@ namespace ArgsParser
     void Container::setActive(){
         active_ = true;
     };
+
+    void Container::postProcess(){
+        if(callback_ != nullptr) callback_();
+    };
 }

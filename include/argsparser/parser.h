@@ -121,8 +121,8 @@ namespace ArgsParser
             Token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
-                const Validator& validator = nullptr,
                 const Converter<T>& converter = nullptr,
+                const Validator<T>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
@@ -138,8 +138,8 @@ namespace ArgsParser
                         "",
                         placeholder_text,
                         1,
-                        validator,
                         converter,
+                        validator,
                         error_callback,
                         callback
                     );
@@ -160,15 +160,15 @@ namespace ArgsParser
             Token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
-                const Validator& validator = nullptr,
+                const Validator<std::string>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
                 return registerPositional<std::string>(
                     name,
                     placeholder_text,
-                    validator,
                     nullptr,
+                    validator,
                     error_callback,
                     callback
                 );
@@ -241,8 +241,8 @@ namespace ArgsParser
                 const std::string& placeholder_text = "value",
                 const std::string& description = "Description not given.",
                 const size_t max_values = 1,
-                const Validator& validator = nullptr,
                 const Converter<T>& converter = nullptr,
+                const Validator<T>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
@@ -267,8 +267,8 @@ namespace ArgsParser
                         description,
                         placeholder_text,
                         max_values,
-                        validator,
                         converter,
+                        validator,
                         error_callback,
                         callback
                     );
@@ -293,7 +293,7 @@ namespace ArgsParser
                 const std::string& placeholder_text = "value",
                 const std::string& description = "Description not given.",
                 const size_t max_values = 1,
-                const Validator& validator = nullptr,
+                const Validator<std::string>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
             ){
@@ -303,8 +303,8 @@ namespace ArgsParser
                     placeholder_text,
                     description,
                     max_values,
-                    validator,
                     nullptr,
+                    validator,
                     error_callback,
                     callback
                 );
