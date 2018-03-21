@@ -9,7 +9,7 @@
 
 #include<argsparser/util.h>
 
-namespace ArgsParser
+namespace ArgsTools
 {
     bool check_identifier(const std::string& string){
 
@@ -48,5 +48,9 @@ namespace ArgsParser
         );
         
         return ret_string;
-    };   
+    };
+
+    void print_error(const std::exception& e){
+        std::cerr << "Error: " << e.what() << std::endl;
+    };
 }

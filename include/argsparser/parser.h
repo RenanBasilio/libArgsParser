@@ -10,8 +10,8 @@
 
 #include <unordered_map>
 #include <limits>
-#include <iostream>
 #include <argsparser/container.h>
+#include <argsparser/util.h>
 
 namespace ArgsParser
 { 
@@ -24,16 +24,14 @@ namespace ArgsParser
         std::unique_ptr<ParserImpl> parser_impl;
 
         // Whether errors should throw unhandled exceptions.
-        bool errors_critical;
+        const bool no_except_;
 
         // A method to call if an error occurs.
-        ErrorHandler error_callback = [](const int error_code, const std::string& error_message){
-            std::cerr << "Error " << error_code << ": " << error_message << std::endl;
-        };
+        ErrorHandler error_callback_;
         
         public:
             Parser();
-            Parser(bool autohelp, ErrorHandler error_callback);
+            Parser(bool no_except, ErrorHandler error_callback = ArgsTools::print_error);
             Parser(const Parser& other);        // Copy constructor.
             Parser(Parser&& other);             // Move constructor.
             Parser& operator=(Parser other);    // Assignment operator
@@ -153,7 +151,7 @@ namespace ArgsParser
                 catch (const std::exception& e){
                     std::string error_string = std::string("Registration Error: ") + e.what();
 
-                    if(errors_critical) throw std::runtime_error(error_string);
+                    if(!no_except_) throw std::runtime_error(error_string);
                     else setError(error_string);
 
                     return NULL_TOKEN;
@@ -256,7 +254,7 @@ namespace ArgsParser
                     std::vector<std::string> identifiers_(identifiers.size());
                     for(size_t i = 0; i < identifiers.size(); i++)
                     {
-                        identifiers_[i] = make_identifier(identifiers[i]);
+                        identifiers_[i] = ArgsTools::make_identifier(identifiers[i]);
                         if(isIdentifierRegistered(identifiers_[i]))
                             throw std::runtime_error( "Identifier \"" + identifiers_[i] + "\" is already registered." );
                     }
@@ -283,7 +281,7 @@ namespace ArgsParser
                 catch (const std::exception& e) {
                     std::string error_string = std::string("Registration Error: ") + e.what();
 
-                    if(errors_critical) throw std::runtime_error(error_string);
+                    if(!no_except_) throw std::runtime_error(error_string);
                     else setError(error_string);
 
                     return NULL_TOKEN;
