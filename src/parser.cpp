@@ -286,7 +286,7 @@ namespace ArgsParser
     ValueWrapper Parser::getValue(const Token& token) const{
         const UserInputContainer* container = dynamic_cast<const UserInputContainer*>(getContainer(token));
         if (container != nullptr) return container->getValue();
-        else return {{""}, container->isActive()};
+        else return {std::vector<std::string>(), container->isActive()};
     };
 
     Container* Parser::ParserImpl::getContainer(const Token& token) const{
