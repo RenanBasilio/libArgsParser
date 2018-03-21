@@ -10,7 +10,7 @@
 
 #include <unordered_map>
 #include <limits>
-#include <argsparser/container.h>
+#include <argsparser/typed_input_container.h>
 #include <argsparser/util.h>
 
 namespace ArgsParser
