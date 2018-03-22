@@ -42,22 +42,22 @@ namespace ArgsParser
             // Accessor Operators
             ValueWrapper operator[](const std::string& name) const;
             ValueWrapper operator[](const Token& token) const;
-            template <typename T> T operator[](const std::string& name) const
+            template <typename T> TypedValueWrapper<T> operator[](const std::string& name) const
             {
                 return getValue<T>(name);
             };
-            template <typename T> T operator[](const Token& token) const
+            template <typename T> TypedValueWrapper<T> operator[](const Token& token) const
             {
                 return getValue<T>(token);
             };
 
             ValueWrapper getValue(const std::string& name) const;
             ValueWrapper getValue(const Token& token) const;
-            template <typename T> T getValue(const std::string& name) const
+            template <typename T> TypedValueWrapper<T> getValue(const std::string& name) const
             {
                 return getValue<T>(isRegistered(name));
             };
-            template <typename T> T getValue(const Token& token) const
+            template <typename T> TypedValueWrapper<T> getValue(const Token& token) const
             {
                 TypedInputContainer<T>* container = dynamic_cast<TypedInputContainer<T>*>(getContainer(token));
                 return container->getConvertedValue();

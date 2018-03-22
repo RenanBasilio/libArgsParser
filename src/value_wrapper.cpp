@@ -24,6 +24,10 @@ namespace ArgsParser
         return fullStr;
     };
 
+    ValueWrapper::operator std::vector<std::string>() const noexcept {
+        return user_input;
+    };
+
     std::string ValueWrapper::operator[](size_t position) const noexcept {
         // Return the requested value if the position specified is valid
         if (position < user_input.size()) return user_input[position];
