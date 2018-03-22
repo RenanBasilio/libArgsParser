@@ -9,7 +9,7 @@
  */
 
 #pragma once
-#include <common.h>
+#include <argsparser/common.h>
 
 namespace ArgsParser
 {
@@ -21,6 +21,8 @@ namespace ArgsParser
         operator bool() const noexcept;
         
         operator std::string() const noexcept;
+        
+        operator std::vector<std::string>() const noexcept;
 
         std::string operator[](size_t position) const noexcept;
 

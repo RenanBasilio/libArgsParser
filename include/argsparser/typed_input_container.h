@@ -10,6 +10,7 @@
 
 #pragma once
 #include <argsparser/input_container.h>
+#include <argsparser/typed_value_wrapper.h>
 
 namespace ArgsParser
 {
@@ -30,8 +31,8 @@ namespace ArgsParser
              * 
              * @return {T} The result of the conversion of the user input stored in this parser.
              */
-            std::vector<T> getConvertedValue() const {
-                return converted_value_;
+            TypedValueWrapper<T> getConvertedValue() const {
+                return {active, converted_value_};
             };
 
             /**
