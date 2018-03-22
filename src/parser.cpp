@@ -173,8 +173,6 @@ namespace ArgsParser
         }
 
         // Calculate the id of the container.
-        // The last digit of the container is the type (ArgType), while
-        // the remaining digits are the index in the container.
         Token id_token =  {type, (unsigned short)index};
 
         // Add the id to the map of names.

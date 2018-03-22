@@ -32,7 +32,7 @@ namespace ArgsParser
              * @return {T} The result of the conversion of the user input stored in this parser.
              */
             TypedValueWrapper<T> getConvertedValue() const {
-                return {active, converted_value_};
+                return {active_, converted_value_};
             };
 
             /**

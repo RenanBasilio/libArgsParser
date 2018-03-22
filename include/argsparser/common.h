@@ -30,32 +30,6 @@ namespace ArgsParser
     };
 
     /**
-     * This defines the type of the id tokens returned by registration methods
-     * in the parser. These can be used to more quickly retrieve registered
-     * itemby skipping the hashing and lookup processes associated with stl
-     * maps.
-     */
-    struct Token
-    {
-        ArgType type;
-        unsigned short position;
-
-        operator bool() const{
-            return (type != ArgType::Null);
-        };
-
-        bool operator==(const Token& other) const{
-            return (other.type == type && other.position == position);
-        }
-
-        Token operator||(const Token& other) const{
-            const Token& token = type != ArgType::Null? *this : other;
-            return token;
-        }
-    };
-    const Token NULL_TOKEN = {ArgType::Null, 0};
-
-    /**
      * This is the declaration of a validator function.
      * 
      * Validator functions must always take a string (the input that will be 
