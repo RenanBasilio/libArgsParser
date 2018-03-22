@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
         "Test registration of a lambda expression converter with additional parameters.",
         1,
         [](std::string input)->int{return std::stoi(input);},
-        [](int input){if(input > 5 ) return false; else return true; },
+        [](int input){if(input > 2000) return false; else return true; },
         [testParser](const std::exception& e){std::cout << "Conversion to int failed: " << e.what() << std::endl;},
         [&success_message](){print_string(success_message);}
     );
