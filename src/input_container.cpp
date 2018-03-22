@@ -1,16 +1,16 @@
 /**
- * UserInputContainer.cpp
+ * InputContainer.cpp
  * 
- * This file contains the definition of methods in the UserInputContainer class.
+ * This file contains the definition of methods in the InputContainer class.
  * 
  * Copyright (C) 2018 Renan Basilio. All rights reserved.
  */
 
-#include <argsparser/user_input_container.h>
+#include <argsparser/input_container.h>
 
 namespace ArgsParser
 {
-    UserInputContainer::UserInputContainer(
+    InputContainer::InputContainer(
         const ArgType type,
         const std::string& name,
         const std::vector<std::string>& identifiers,
@@ -29,12 +29,12 @@ namespace ArgsParser
         validation_failure_reason_("No input value.")
     { };
 
-    UserInputContainer::~UserInputContainer(){
+    InputContainer::~InputContainer(){
 
     }
 
-    UserInputContainer* UserInputContainer::clone() const{
-        UserInputContainer* copy = new UserInputContainer(
+    InputContainer* InputContainer::clone() const{
+        InputContainer* copy = new InputContainer(
             type_,
             name_,
             identifiers_,
@@ -51,36 +51,36 @@ namespace ArgsParser
         return copy;
     }
 
-    std::string UserInputContainer::getPlaceholderText() const{
+    std::string InputContainer::getPlaceholderText() const{
         return placeholder_text_;
     };
 
-    std::vector<std::string> UserInputContainer::getUserInput() const{
+    std::vector<std::string> InputContainer::getUserInput() const{
         return user_input_;
     };
 
-    size_t UserInputContainer::getInputSize(){
+    size_t InputContainer::getInputSize(){
         return user_input_.size();
     };
 
-    size_t UserInputContainer::getMaxInputs(){
+    size_t InputContainer::getMaxInputs(){
         return max_values_;
     };
 
-    ValueWrapper UserInputContainer::getValue() const{
+    ValueWrapper InputContainer::getValue() const{
         return {user_input_, active_};
     };
 
-    std::pair<bool, std::string> UserInputContainer::getValidation() const{
+    std::pair<bool, std::string> InputContainer::getValidation() const{
         return std::make_pair(validation_, validation_failure_reason_);
     };
 
-    void UserInputContainer::setActive(const std::string& input){
+    void InputContainer::setActive(const std::string& input){
         if(!active_) Container::setActive();
         user_input_.push_back(input);
     };
 
-    void UserInputContainer::postProcess(){
+    void InputContainer::postProcess(){
 
         if (validator_ != nullptr) {
             for (size_t i = 0; i < user_input_.size(); i++) {

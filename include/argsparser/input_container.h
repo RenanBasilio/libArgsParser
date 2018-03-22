@@ -1,7 +1,7 @@
 /**
- * user_input_container.h
+ * input_container.h
  * 
- * This file contains the declaration of the UserInputContainer class, used to
+ * This file contains the declaration of the InputContainer class, used to
  * process arguments where the input does not have a user-specified type and
  * is therefore treated as a string.
  * 
@@ -18,7 +18,7 @@ namespace ArgsParser
      * the basic container class with additional methods to store and retrieve
      * input parameters.
      */
-    class UserInputContainer : public Container{
+    class InputContainer : public Container{
         public:
             /**
              * This method retrieves the placeholder text assigned to this
@@ -82,7 +82,7 @@ namespace ArgsParser
              * @param {ErrorHandler} error_callback A function to call if validation fails.
              * @param {Callback} callback A function to call if validation succeeds.
              */
-            UserInputContainer(
+            InputContainer(
                 const ArgType type,
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
@@ -97,14 +97,14 @@ namespace ArgsParser
             /**
              * This is the destructor for the user input container.
              */
-            virtual ~UserInputContainer();
+            virtual ~InputContainer();
 
             /**
              * Cloning method.
              * 
-             * @return {Container*} A pointer to a new UserInputContainer object cloned from this object.
+             * @return {Container*} A pointer to a new InputContainer object cloned from this object.
              */
-            virtual UserInputContainer* clone() const;
+            virtual InputContainer* clone() const;
 
 
         protected:

@@ -27,7 +27,7 @@ set(
     src/autohelp.cpp
     src/container.cpp
     src/parser.cpp
-    src/user_input_container.cpp
+    src/input_container.cpp
     src/value_wrapper.cpp
     src/util.cpp
 )
@@ -38,7 +38,7 @@ set(
     include/argsparser/autohelp.h
     include/argsparser/common.h
     include/argsparser/container.h
-    include/argsparser/user_input_container.h
+    include/argsparser/input_container.h
     include/argsparser/typed_input_container.h
     include/argsparser/parser.h
     include/argsparser/value_wrapper.h

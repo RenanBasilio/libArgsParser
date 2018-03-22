@@ -9,13 +9,13 @@
  */
 
 #pragma once
-#include <argsparser/user_input_container.h>
+#include <argsparser/input_container.h>
 
 namespace ArgsParser
 {
 
     /**
-     * This class is a UserInputContainer with an assigned type. It is to be
+     * This class is a InputContainer with an assigned type. It is to be
      * used when a specific return type is desired from an option, if said
      * type is known.
      * A converter function must be provided that transforms a string into the
@@ -23,7 +23,7 @@ namespace ArgsParser
      * This class is used by positionals and input parameters.
      */
     template <typename T>
-    class TypedInputContainer : public UserInputContainer {
+    class TypedInputContainer : public InputContainer {
         public:    
             /**
              * This method gets the converted value of the user input.
@@ -59,7 +59,7 @@ namespace ArgsParser
                 const Validator<T>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
-            ) : UserInputContainer(
+            ) : InputContainer(
                     type,
                     name, 
                     identifiers,
