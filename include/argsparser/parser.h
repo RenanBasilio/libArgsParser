@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include <limits>
+#include <token.h>
 #include <argsparser/typed_input_container.h>
 #include <argsparser/util.h>
 

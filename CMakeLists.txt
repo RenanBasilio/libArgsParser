@@ -26,10 +26,11 @@ set(
     SOURCE_FILES 
     src/autohelp.cpp
     src/container.cpp
-    src/parser.cpp
     src/input_container.cpp
-    src/value_wrapper.cpp
+    src/parser.cpp
+    src/token.cpp
     src/util.cpp
+    src/value_wrapper.cpp
 )
 
 set(
@@ -39,10 +40,12 @@ set(
     include/argsparser/common.h
     include/argsparser/container.h
     include/argsparser/input_container.h
-    include/argsparser/typed_input_container.h
     include/argsparser/parser.h
-    include/argsparser/value_wrapper.h
+    include/argsparser/token.h
+    include/argsparser/typed_input_container.h
+    include/argsparser/typed_value_wrapper.h
     include/argsparser/util.h
+    include/argsparser/value_wrapper.h
 )
 
 set(
@@ -50,7 +53,7 @@ set(
     include/argsparser/parserImpl.h
 )
 
-set(LIB_NAME libargsparser)
+set(LIB_NAME argsparser)
 
 add_library(${LIB_NAME} STATIC ${SOURCE_FILES})
 set_target_properties(
