@@ -222,7 +222,7 @@ namespace ArgsParser
         program_name = program_name.substr(program_name.find_last_of("/\\")+1);
         if (getProgramName() == "") setProgramName(program_name);
 
-        UserInputContainer* currentContainer = nullptr;
+        InputContainer* currentContainer = nullptr;
         size_t positional = 0;
         for (int i = 1; i < argc; i++)
         {
@@ -235,7 +235,7 @@ namespace ArgsParser
                 baseContainer->setActive();
                 // If container is not a switch, cast it to an input container and keep it loaded.
                 if(baseContainer->getType() != ArgType::Switch) 
-                    currentContainer = dynamic_cast<UserInputContainer*>(baseContainer);
+                    currentContainer = dynamic_cast<InputContainer*>(baseContainer);
             }
             else // This is a value
             {
@@ -284,7 +284,7 @@ namespace ArgsParser
     };
 
     ValueWrapper Parser::getValue(const Token& token) const{
-        const UserInputContainer* container = dynamic_cast<const UserInputContainer*>(getContainer(token));
+        const InputContainer* container = dynamic_cast<const InputContainer*>(getContainer(token));
         if (container != nullptr) return container->getValue();
         else return {std::vector<std::string>(), container->isActive()};
     };
