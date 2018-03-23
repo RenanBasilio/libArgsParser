@@ -50,8 +50,23 @@ int main(int argc, char* argv[]){
         [&success_message](){print_string(success_message);}
     );
     std::cout << "LAMBDA_REG_TEST " << testParser.error_description << std::endl;
-    
+
+    ArgsParser::Token bwti;
+    bwti = testParser.registerOption<int>(
+        "basic workflow test <int>",
+        {"bwti"},
+        "integer",
+        "Test basic workflow including retrieval of an integer option.",
+        1,
+        [](std::string input)->int{return std::stoi(input);},
+        [](int input){return true;},
+        [testParser](const std::exception& e){ArgsTools::print_error(e);},
+        [testParser, success_message, bwti](){std::cout << success_message << std::endl;}
+    );
+    std::cout << "LAMBDA_REG_TEST2 " << testParser.error_description << std::endl;
     testParser.parse(argc, argv);
+    std::cout << "BASIC_WORKFLOW_TEST_INT: " << "Returned value " << std::to_string((int)(testParser.getValue<int>("bwti"))) << "i." << std::endl;
+
     std::cout << "Debug";
 
     return 0;

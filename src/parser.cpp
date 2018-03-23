@@ -92,7 +92,7 @@ namespace ArgsParser
         parser_impl->program_name = name;
     }
 
-    Token Parser::isRegistered(const std::string& symbol) const{
+    Token Parser::isRegistered(const std::string& symbol){
         return (isNameRegistered(symbol) || isIdentifierRegistered(symbol));
     }
 
@@ -100,12 +100,21 @@ namespace ArgsParser
         return parser_impl->names.count(name) > 0? parser_impl->names[name] : NULL_TOKEN;
     }
 
-    Token Parser::isIdentifierRegistered(const std::string& identifier) const{
-        // First check if this is a proper identifier. If not, make one.
-        const std::string identifier_ = 
-            (ArgsTools::check_identifier(identifier)? identifier : ArgsTools::make_identifier(identifier));
+    Token Parser::isIdentifierRegistered(const std::string& identifier){
+        try {
+            // First check if this is a proper identifier. If not, make one.
+            const std::string identifier_ = 
+                (ArgsTools::check_identifier(identifier)? identifier : ArgsTools::make_identifier(identifier));
 
-        return parser_impl->identifiers.count(identifier_) > 0? parser_impl->identifiers[identifier_] : NULL_TOKEN;
+            return parser_impl->identifiers.count(identifier_) > 0? parser_impl->identifiers[identifier_] : NULL_TOKEN;
+        }
+        catch (const std::exception& e) {
+            if (no_except_) {
+                setError(e.what());
+                return NULL_TOKEN;
+            }
+            else throw;
+        }
     }
 
     Token Parser::registerSwitch(
@@ -207,12 +216,20 @@ namespace ArgsParser
         return names;
     }
 
-    const Container* Parser::getContainer(const std::string& name) const{
+    const Container* Parser::getContainer(const std::string& name){
         return getContainer(isRegistered(name));
     }
 
-    const Container* Parser::getContainer(const Token& token) const{
-        return const_cast<Container*>(parser_impl->getContainer(token));
+    const Container* Parser::getContainer(const Token& token){
+        try {
+            return const_cast<Container*>(parser_impl->getContainer(token));
+        }
+        catch (const std::exception&) {
+            if (no_except_) {
+                setError("Invalid token.");
+                return nullptr; }
+            else throw std::invalid_argument("Invalid token.");
+        }
     }
 
     void Parser::parse(int argc, char* argv[]){
@@ -232,16 +249,18 @@ namespace ArgsParser
                 {
                     // Load the container for the option and set it to active.
                     Container* baseContainer = parser_impl->getContainer(isIdentifierRegistered(current));
-                    baseContainer->setActive();
-                    activeContainers.push_back(baseContainer);
-                    // If container is not a switch, cast it to an input container and keep it loaded.
-                    if(baseContainer->getType() != ArgType::Switch) 
-                        currentContainer = dynamic_cast<InputContainer*>(baseContainer);
+                    if(baseContainer) {
+                        baseContainer->setActive();
+                        activeContainers.push_back(baseContainer);
+                        // If container is not a switch, cast it to an input container and keep it loaded.
+                        if(baseContainer->getType() != ArgType::Switch) 
+                            currentContainer = dynamic_cast<InputContainer*>(baseContainer);
+                    }
                 }
                 else // This is a value
                 {
+                    std::cout << "Found value " << current << std::endl;
                     // If there is no current container, this is a positional, so load the container.
-                    std::cout << "1b" << std::endl;
                     if(currentContainer == nullptr && (size_t)positional < parser_impl->registered_positionals.size()) 
                         parser_impl->getContainer({ArgType::Positional, (unsigned short)positional});
                     
@@ -327,7 +346,7 @@ namespace ArgsParser
         );
     };
 
-    Container* Parser::ParserImpl::getContainer(const Token& token) const{
+    Container* Parser::ParserImpl::getContainer(const Token& token) {
         try
         {
             switch (token.type)
@@ -346,8 +365,9 @@ namespace ArgsParser
                     break;
             }      
         }
-        catch (const std::out_of_range&)
+        catch (const std::exception& e)
         {
+            error_description = e.what();
             return nullptr;
         }
     };
