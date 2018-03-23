@@ -44,15 +44,6 @@ namespace ArgsParser
         ~ParserImpl();
 
         /**
-         * This method gets the token of the container referred to by the
-         * identifier.
-         * 
-         * @param {std::string} identifier The identifier for which to retrieve the container.
-         * @return {Token} The token corresponding to identifier.
-         */
-        Token getToken(const std::string& identifier);
-
-        /**
          * This method gets a registered container by it's token.
          * @param {Token} The registration token.
          * @return {Container*} The container.

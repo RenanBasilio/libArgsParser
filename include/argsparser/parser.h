@@ -40,10 +40,10 @@ namespace ArgsParser
 
             friend void swap(Parser& first, Parser& second);
 
-            ValueWrapper getValue(const std::string& name);
-            ValueWrapper getValue(const Token& token);
-            template <typename T> const TypedValueWrapper<T> getValue(const std::string& name);
-            template <typename T> const TypedValueWrapper<T> getValue(const Token& token);
+            ValueWrapper getValue(const std::string& name) const noexcept;
+            ValueWrapper getValue(const Token& token) const noexcept;
+            template <typename T> const TypedValueWrapper<T> getValue(const std::string& name) const noexcept;
+            template <typename T> const TypedValueWrapper<T> getValue(const Token& token) const noexcept;
 
             const unsigned short& error_code;
             const std::string& error_description;
@@ -54,14 +54,14 @@ namespace ArgsParser
              * @param {std::string} symbol The symbol to search for.
              * @return {bool} True if symbol is registered. False otherwise.
              */
-            Token isRegistered(const std::string& symbol);
+            Token isRegistered(const std::string& symbol) const noexcept;
 
             /**
              * This method returns whether a name is registered to the parser.
              * @param {std::string} name The name to search for.
              * @return {bool} True if name is registered. False otherwise.
              */
-            Token isNameRegistered(const std::string& name) const;
+            Token isNameRegistered(const std::string& name) const noexcept;
 
             /**
              * This method returns whether an identifier is registered to the 
@@ -69,7 +69,7 @@ namespace ArgsParser
              * @param {std::string} identifier The identifier to search for.
              * @return {bool} True if the identifier is registered. False otherwise.
              */
-            Token isIdentifierRegistered(const std::string& identifier);
+            Token isIdentifierRegistered(const std::string& identifier) const noexcept;
 
             /**
              * This method register a positional argument to the parser. Usage example:
@@ -218,15 +218,15 @@ namespace ArgsParser
              * @param {Token} The registration token.
              * @return {Container*} The container.
              */
-            const Container* getContainer(const std::string& name);
-            const Container* getContainer(const Token& token);
+            const Container* getContainer(const std::string& name) const noexcept;
+            const Container* getContainer(const Token& token) const noexcept;
 
             /**
              * This method gets the program name (either as provided by the user
              * or parsed by the application).
              * @return {std::string} The name of the program.
              */
-            std::string getProgramName() const;
+            std::string getProgramName() const noexcept;
 
             /**
              * This method sets the program name. If a name is set it will override
@@ -289,27 +289,20 @@ namespace ArgsParser
 
 
     template <typename T>
-    const TypedValueWrapper<T> Parser::getValue(const std::string& name)
-    {
+    const TypedValueWrapper<T> Parser::getValue(const std::string& name) const noexcept {
         return getValue<T>(isRegistered(name));
     };
 
     template <typename T>
-    const TypedValueWrapper<T> Parser::getValue(const Token& token)
-    {
+    const TypedValueWrapper<T> Parser::getValue(const Token& token) const noexcept {
         try {
             const TypedInputContainer<T>* container = dynamic_cast<const TypedInputContainer<T>*>(getContainer(token));
             if (container == nullptr) throw std::invalid_argument(
                 std::string("Identifier does not refer to a registered container of type ") + typeid(T).name());
             return container->getConvertedValue();
         }
-        catch (const std::exception& e) {
-            if (no_except_) 
-            {
-                setError(e.what());
-                return TypedValueWrapper<T>();
-            }
-            else throw e;
+        catch (const std::exception&) {
+            return TypedValueWrapper<T>();
         }
     };
 
