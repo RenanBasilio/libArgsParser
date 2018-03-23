@@ -54,7 +54,7 @@ namespace ArgsParser
              * @param {std::string} symbol The symbol to search for.
              * @return {bool} True if symbol is registered. False otherwise.
              */
-            Token isRegistered(const std::string& symbol) const;
+            Token isRegistered(const std::string& symbol);
 
             /**
              * This method returns whether a name is registered to the parser.
@@ -69,7 +69,7 @@ namespace ArgsParser
              * @param {std::string} identifier The identifier to search for.
              * @return {bool} True if the identifier is registered. False otherwise.
              */
-            Token isIdentifierRegistered(const std::string& identifier) const;
+            Token isIdentifierRegistered(const std::string& identifier);
 
             /**
              * This method register a positional argument to the parser. Usage example:
@@ -218,8 +218,8 @@ namespace ArgsParser
              * @param {Token} The registration token.
              * @return {Container*} The container.
              */
-            const Container* getContainer(const std::string& name) const;
-            const Container* getContainer(const Token& token) const;
+            const Container* getContainer(const std::string& name);
+            const Container* getContainer(const Token& token);
 
             /**
              * This method gets the program name (either as provided by the user
