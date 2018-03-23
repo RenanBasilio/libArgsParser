@@ -103,17 +103,17 @@ namespace ArgsParser
             Token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
+                const Callback& callback = nullptr,
                 const Converter<T>& converter = nullptr,
                 const Validator<T>& validator = nullptr,
-                const ErrorHandler& error_callback = nullptr,
-                const Callback& callback = nullptr
+                const ErrorHandler& error_callback = nullptr
             );
             Token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
+                const Callback& callback = nullptr,
                 const Validator<std::string>& validator = nullptr,
-                const ErrorHandler& error_callback = nullptr,
-                const Callback& callback = nullptr
+                const ErrorHandler& error_callback = nullptr
             );
 
             /**
@@ -183,10 +183,10 @@ namespace ArgsParser
                 const std::string& placeholder_text = "value",
                 const std::string& description = "Description not given.",
                 const size_t max_values = 1,
+                const Callback& callback = nullptr,
                 const Converter<T>& converter = nullptr,
                 const Validator<T>& validator = nullptr,
-                const ErrorHandler& error_callback = nullptr,
-                const Callback& callback = nullptr
+                const ErrorHandler& error_callback = nullptr
             );
             Token registerOption(
                 const std::string& name,
@@ -194,9 +194,9 @@ namespace ArgsParser
                 const std::string& placeholder_text = "value",
                 const std::string& description = "Description not given.",
                 const size_t max_values = 1,
+                const Callback& callback = nullptr,
                 const Validator<std::string>& validator = nullptr,
-                const ErrorHandler& error_callback = nullptr,
-                const Callback& callback = nullptr
+                const ErrorHandler& error_callback = nullptr
             );
 
             /**
@@ -310,10 +310,10 @@ namespace ArgsParser
     Token Parser::registerPositional(
         const std::string& name,
         const std::string& placeholder_text,
+        const Callback& callback,
         const Converter<T>& converter,
         const Validator<T>& validator,
-        const ErrorHandler& error_callback,
-        const Callback& callback
+        const ErrorHandler& error_callback
     ){
         try{
             // First check if name is already registered.
@@ -354,10 +354,10 @@ namespace ArgsParser
         const std::string& placeholder_text,
         const std::string& description,
         const size_t max_values,
+        const Callback& callback,
         const Converter<T>& converter,
         const Validator<T>& validator,
-        const ErrorHandler& error_callback,
-        const Callback& callback
+        const ErrorHandler& error_callback
     ){
         try{
             // First check if all identifiers are open to be registered.
