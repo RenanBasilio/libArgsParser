@@ -227,44 +227,47 @@ namespace ArgsParser
         {
             std::string current = std::string(argv[i]);
             // First check whether we are dealing with an option or value.
-            if(current.at(0) == '-') // This is an option
-            {
-                // Load the container for the option and set it to active.
-                Container* baseContainer = parser_impl->getContainer(isIdentifierRegistered(current));
-                baseContainer->setActive();
-                activeContainers.push_back(baseContainer);
-                // If container is not a switch, cast it to an input container and keep it loaded.
-                if(baseContainer->getType() != ArgType::Switch) 
-                    currentContainer = dynamic_cast<InputContainer*>(baseContainer);
-            }
-            else // This is a value
-            {
-                // If there is no current container, this is a positional, so load the container.
-                if(currentContainer == nullptr && (size_t)positional < parser_impl->registered_positionals.size()) 
-                    parser_impl->getContainer({ArgType::Positional, (unsigned short)positional});
-                
-                // If a container is loaded
-                if(currentContainer != nullptr)
+            if(current.size() > 1) {
+                if(current.at(0) == '-') // This is an option
                 {
-                    // If this is a value option and the maximum amount of options have been loaded, throw an exception.
-                    if(currentContainer->getType() == ArgType::Option && 
-                       currentContainer->getInputSize() == currentContainer->getMaxInputs())
-                        throw std::runtime_error("Too many arguments to option " + currentContainer->getName());
-
-                    // Append the current input to the container.
-                    currentContainer->setActive(current);
-
-                    // If the current container is a positional argument, increment the positional counter and unload it.
-                    if(currentContainer->getType() == ArgType::Positional)
+                    // Load the container for the option and set it to active.
+                    Container* baseContainer = parser_impl->getContainer(isIdentifierRegistered(current));
+                    baseContainer->setActive();
+                    activeContainers.push_back(baseContainer);
+                    // If container is not a switch, cast it to an input container and keep it loaded.
+                    if(baseContainer->getType() != ArgType::Switch) 
+                        currentContainer = dynamic_cast<InputContainer*>(baseContainer);
+                }
+                else // This is a value
+                {
+                    // If there is no current container, this is a positional, so load the container.
+                    std::cout << "1b" << std::endl;
+                    if(currentContainer == nullptr && (size_t)positional < parser_impl->registered_positionals.size()) 
+                        parser_impl->getContainer({ArgType::Positional, (unsigned short)positional});
+                    
+                    // If a container is loaded
+                    if(currentContainer != nullptr)
                     {
-                        positional++;
-                        currentContainer = nullptr;
-                    }
-                    // Otherwise, it is an option, so unload it if it has read the maximum amount of inputs
-                    else
-                    {
-                        if(currentContainer->getInputSize() == currentContainer->getMaxInputs()) 
+                        // If this is a value option and the maximum amount of options have been loaded, throw an exception.
+                        if(currentContainer->getType() == ArgType::Option && 
+                        currentContainer->getInputSize() == currentContainer->getMaxInputs())
+                            throw std::runtime_error("Too many arguments to option " + currentContainer->getName());
+
+                        // Append the current input to the container.
+                        currentContainer->setActive(current);
+
+                        // If the current container is a positional argument, increment the positional counter and unload it.
+                        if(currentContainer->getType() == ArgType::Positional)
+                        {
+                            positional++;
                             currentContainer = nullptr;
+                        }
+                        // Otherwise, it is an option, so unload it if it has read the maximum amount of inputs
+                        else
+                        {
+                            if(currentContainer->getInputSize() == currentContainer->getMaxInputs()) 
+                                currentContainer = nullptr;
+                        }
                     }
                 }
             }
@@ -273,20 +276,12 @@ namespace ArgsParser
             activeContainers[i]->postProcess();
         };
     };
-    
-    ValueWrapper Parser::operator[](const std::string& name) const{
-        return getValue(name);
-    };
 
-    ValueWrapper Parser::operator[](const Token& token) const{
-        return getValue(token);
-    };
-
-    ValueWrapper Parser::getValue(const std::string& name) const{
+    ValueWrapper Parser::getValue(const std::string& name) {
         return getValue(isRegistered(name));
     };
 
-    ValueWrapper Parser::getValue(const Token& token) const{
+    ValueWrapper Parser::getValue(const Token& token) {
         const InputContainer* container = dynamic_cast<const InputContainer*>(getContainer(token));
         if (container != nullptr) return container->getValue();
         else return {std::vector<std::string>(), container->isActive()};
