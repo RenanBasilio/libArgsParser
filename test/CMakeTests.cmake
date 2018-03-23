@@ -5,7 +5,7 @@ macro(add_regex_test name regex)
     # so copy it to a variable first.
     set (test_parameters ${ARGN})
 
-    add_test(NAME ${name} COMMAND ${TEST_EXE} ${test_parameters})
+    add_test(${name} ${TEST_EXE} ${test_parameters})
     set_tests_properties(${name} PROPERTIES PASS_REGULAR_EXPRESSION ${regex})
 endmacro(add_regex_test name regex)
 
