@@ -31,9 +31,7 @@ namespace ArgsParser
              * 
              * @return {T} The result of the conversion of the user input stored in this parser.
              */
-            TypedValueWrapper<T> getConvertedValue() const {
-                return {active_, converted_value_};
-            };
+            TypedValueWrapper<T> getConvertedValue() const;
 
             /**
              * This is the constructor for the typed user input container.
@@ -60,46 +58,14 @@ namespace ArgsParser
                 const Validator<T>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
-            ) : InputContainer(
-                    type,
-                    name, 
-                    identifiers,
-                    description,
-                    placeholder_text,
-                    max_values,
-                    nullptr,
-                    error_callback,
-                    callback
-                    ),
-                converter_(converter),
-                validator_(validator)
-                {};
+            );
 
             /**
              * Cloning method.
              * 
              * @return {Container*} A pointer to a new TypedInputContainer object cloned from this object.
              */
-            virtual TypedInputContainer<T>* clone() const
-            {
-                TypedInputContainer<T>* copy = new TypedInputContainer<T>(
-                    type_,
-                    name_,
-                    identifiers_,
-                    description_,
-                    placeholder_text_,
-                    max_values_,
-                    converter_,
-                    validator_,
-                    error_callback_,
-                    callback_
-                );
-                copy->user_input_ = user_input_;
-                copy->validation_ = validation_;
-                copy->validation_failure_reason_ = validation_failure_reason_;
-                copy->converted_value_ = converted_value_;
-                return copy;
-            };
+            virtual TypedInputContainer<T>* clone() const;
 
             /**
              * This is the destructor for the typed user input container.
@@ -128,28 +94,88 @@ namespace ArgsParser
              * It is virtual, as the derived classes use different post-processing
              * logic to account for other features.
              */
-            virtual void postProcess() {
-                if (converter_ != nullptr) {
-                    for (size_t i = 0; i < user_input_.size(); i++) {
-                        try {
-                            T input = converter_(user_input_[i]);
-                            if (validator_ != nullptr) {
-                                bool valid = validator_(input);
-                                if (!valid) throw std::runtime_error("Unspecified validation error.");
-                            }
+            virtual void postProcess();
+    };
 
-                            converted_value_.push_back(input);
-                        }
-                        catch (std::exception& e) {
-                            validation_ = false;
-                            validation_failure_reason_ = e.what();
 
-                            if(error_callback_ != nullptr) error_callback_(e);
-                            return;
-                        }
+    /////////////////////// Template Method Definitions ///////////////////////
+
+    template <typename T>
+    TypedValueWrapper<T> TypedInputContainer<T>::getConvertedValue() const {
+        return TypedValueWrapper<T>(active_, converted_value_);
+    };
+
+    template <typename T>
+    TypedInputContainer<T>::TypedInputContainer(
+        const ArgType type,
+        const std::string& name,
+        const std::vector<std::string>& identifiers,
+        const std::string& description,
+        const std::string& placeholder_text,
+        const size_t max_values,
+        const Converter<T>& converter,
+        const Validator<T>& validator,
+        const ErrorHandler& error_callback,
+        const Callback& callback
+    ) : InputContainer(
+            type,
+            name, 
+            identifiers,
+            description,
+            placeholder_text,
+            max_values,
+            nullptr,
+            error_callback,
+            callback
+            ),
+        converter_(converter),
+        validator_(validator)
+        {};
+
+    template <typename T>
+    TypedInputContainer<T>* TypedInputContainer<T>::clone() const
+    {
+        TypedInputContainer<T>* copy = new TypedInputContainer<T>(
+            type_,
+            name_,
+            identifiers_,
+            description_,
+            placeholder_text_,
+            max_values_,
+            converter_,
+            validator_,
+            error_callback_,
+            callback_
+        );
+        copy->user_input_ = user_input_;
+        copy->validation_ = validation_;
+        copy->validation_failure_reason_ = validation_failure_reason_;
+        copy->converted_value_ = converted_value_;
+        return copy;
+    };
+
+    template <typename T>
+    void TypedInputContainer<T>::postProcess() {
+        if (converter_ != nullptr) {
+            for (size_t i = 0; i < user_input_.size(); i++) {
+                try {
+                    T input = converter_(user_input_[i]);
+                    if (validator_ != nullptr) {
+                        bool valid = validator_(input);
+                        if (!valid) throw std::runtime_error("Unspecified validation error.");
                     }
+
+                    converted_value_.push_back(input);
                 }
-                if (callback_ != nullptr) callback_();
-            };
-    };    
+                catch (std::exception& e) {
+                    validation_ = false;
+                    validation_failure_reason_ = e.what();
+
+                    if(error_callback_ != nullptr) error_callback_(e);
+                    return;
+                }
+            }
+        }
+        if (callback_ != nullptr) callback_();
+    };
 }
