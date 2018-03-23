@@ -69,6 +69,7 @@ namespace ArgsParser
                    << option_strings[i].second
                    << std::endl;
         }
+        exit(0);
     };
 
     bool Parser::enableAutohelp(){
