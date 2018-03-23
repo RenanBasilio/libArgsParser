@@ -51,27 +51,27 @@ namespace ArgsParser
         return copy;
     }
 
-    std::string InputContainer::getPlaceholderText() const{
+    std::string InputContainer::getPlaceholderText() const noexcept{
         return placeholder_text_;
     };
 
-    std::vector<std::string> InputContainer::getUserInput() const{
+    std::vector<std::string> InputContainer::getUserInput() const noexcept{
         return user_input_;
     };
 
-    size_t InputContainer::getInputSize(){
+    size_t InputContainer::getInputSize() const noexcept{
         return user_input_.size();
     };
 
-    size_t InputContainer::getMaxInputs(){
+    size_t InputContainer::getMaxInputs() const noexcept{
         return max_values_;
     };
 
-    ValueWrapper InputContainer::getValue() const{
+    ValueWrapper InputContainer::getValue() const noexcept{
         return {user_input_, active_};
     };
 
-    std::pair<bool, std::string> InputContainer::getValidation() const{
+    std::pair<bool, std::string> InputContainer::getValidation() const noexcept{
         return std::make_pair(validation_, validation_failure_reason_);
     };
 

@@ -39,7 +39,14 @@ namespace ArgsParser
                 if(container->getType() == ArgType::Switch) 
                     switch_strings.push_back(std::pair<std::string, std::string>(id_string, container->getDescription()));
                 else{
-                    id_string += " <" + dynamic_cast<const InputContainer*>(container)->getPlaceholderText() + ">";
+                    const InputContainer* temp = dynamic_cast<const InputContainer*>(container);
+
+                    std::string placeholder_string = "<" + temp->getPlaceholderText() + ">";
+                    if (temp->getMaxInputs() > 1) placeholder_string = " [" + placeholder_string + "...] ";
+                    else placeholder_string = " " + placeholder_string + " ";
+
+                    id_string += placeholder_string;
+
                     option_strings.push_back(std::pair<std::string, std::string>(id_string, container->getDescription()));
                 }
                 max_id_size = std::max(max_id_size, id_string.length()+4);
