@@ -40,16 +40,10 @@ namespace ArgsParser
 
             friend void swap(Parser& first, Parser& second);
 
-            // Accessor Operators
-            ValueWrapper operator[](const std::string& name) const;
-            ValueWrapper operator[](const Token& token) const;
-            template <typename T> const TypedValueWrapper<T> operator[](const std::string& name) const;
-            template <typename T> const TypedValueWrapper<T> operator[](const Token& token) const;
-
-            ValueWrapper getValue(const std::string& name) const;
-            ValueWrapper getValue(const Token& token) const;
-            template <typename T> const TypedValueWrapper<T> getValue(const std::string& name) const;
-            template <typename T> const TypedValueWrapper<T> getValue(const Token& token) const;
+            ValueWrapper getValue(const std::string& name);
+            ValueWrapper getValue(const Token& token);
+            template <typename T> const TypedValueWrapper<T> getValue(const std::string& name);
+            template <typename T> const TypedValueWrapper<T> getValue(const Token& token);
 
             const unsigned short& error_code;
             const std::string& error_description;
@@ -295,28 +289,28 @@ namespace ArgsParser
 
 
     template <typename T>
-    const TypedValueWrapper<T> Parser::operator[](const Token& token) const
-    {
-        return getValue<T>(token);
-    };
-
-    template <typename T>
-    const TypedValueWrapper<T> Parser::operator[](const std::string& name) const
-    {
-        return getValue<T>(name);
-    };
-
-    template <typename T>
-    const TypedValueWrapper<T> Parser::getValue(const std::string& name) const
+    const TypedValueWrapper<T> Parser::getValue(const std::string& name)
     {
         return getValue<T>(isRegistered(name));
     };
 
     template <typename T>
-    const TypedValueWrapper<T> Parser::getValue(const Token& token) const
+    const TypedValueWrapper<T> Parser::getValue(const Token& token)
     {
-        const TypedInputContainer<T>* container = dynamic_cast<const TypedInputContainer<T>*>(getContainer(token));
-        return container->getConvertedValue();
+        try {
+            const TypedInputContainer<T>* container = dynamic_cast<const TypedInputContainer<T>*>(getContainer(token));
+            if (container == nullptr) throw std::invalid_argument(
+                std::string("Identifier does not refer to a registered container of type ") + typeid(T).name());
+            return container->getConvertedValue();
+        }
+        catch (const std::exception& e) {
+            if (no_except_) 
+            {
+                setError(e.what());
+                return TypedValueWrapper<T>();
+            }
+            else throw e;
+        }
     };
 
     template <typename T>

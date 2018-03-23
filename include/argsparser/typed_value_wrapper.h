@@ -29,6 +29,7 @@ namespace ArgsParser
 
         size_t size() const noexcept;
 
+        TypedValueWrapper();
         TypedValueWrapper(bool active, std::vector<T> typed_input);
     };
 
@@ -67,6 +68,11 @@ namespace ArgsParser
     size_t TypedValueWrapper<T>::size() const noexcept {
         return typed_input_.size();
     };
+
+    template <typename T>
+    TypedValueWrapper<T>::TypedValueWrapper():
+        active_(false),
+        typed_input_(std::vector<T>()) {};
 
     template <typename T>
     TypedValueWrapper<T>::TypedValueWrapper( bool active, std::vector<T> typed_input):
