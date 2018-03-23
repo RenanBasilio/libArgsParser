@@ -301,9 +301,9 @@ namespace ArgsParser
     Token Parser::registerPositional(
         const std::string& name,
         const std::string& placeholder_text,
+        const Callback& callback,
         const Validator<std::string>& validator,
-        const ErrorHandler& error_callback,
-        const Callback& callback
+        const ErrorHandler& error_callback
     ){
         try{
             // First check if name is already registered.
@@ -342,9 +342,9 @@ namespace ArgsParser
         const std::string& placeholder_text,
         const std::string& description,
         const size_t max_values,
+        const Callback& callback,
         const Validator<std::string>& validator,
-        const ErrorHandler& error_callback,
-        const Callback& callback
+        const ErrorHandler& error_callback
     ){
         try{
             // First check if all identifiers are open to be registered.

@@ -44,10 +44,10 @@ int main(int argc, char* argv[]){
         "value",
         "Test registration of a lambda expression converter with additional parameters.",
         1,
+        [&success_message](){print_string(success_message);},
         [](std::string input)->int{return std::stoi(input);},
         [](int input){if(input > 2000) return false; else return true; },
-        [testParser](const std::exception& e){std::cout << "Conversion to int failed: " << e.what() << std::endl;},
-        [&success_message](){print_string(success_message);}
+        [testParser](const std::exception& e){std::cout << "Conversion to int failed: " << e.what() << std::endl;}
     );
     std::cout << "LAMBDA_REG_TEST " << testParser.error_description << std::endl;
 
@@ -58,10 +58,10 @@ int main(int argc, char* argv[]){
         "integer",
         "Test basic workflow including retrieval of an integer option.",
         1,
+        [testParser, success_message, bwti](){std::cout << success_message << std::endl;},
         [](std::string input)->int{return std::stoi(input);},
         [](int input){return true;},
-        [testParser](const std::exception& e){ArgsTools::print_error(e);},
-        [testParser, success_message, bwti](){std::cout << success_message << std::endl;}
+        [testParser](const std::exception& e){ArgsTools::print_error(e);}
     );
     std::cout << "LAMBDA_REG_TEST2 " << testParser.error_description << std::endl;
     testParser.parse(argc, argv);
