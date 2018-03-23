@@ -28,21 +28,21 @@ namespace ArgsParser
              * 
              * @return {string} The name of the argument stored in this container.
              */
-            std::string getName() const;
+            std::string getName() const noexcept;
 
             /**
              * This method retrieves the type of this container.
              * 
              * @return {ArgType} The type of the argument stored in this container.
              */
-            ArgType getType() const;
+            ArgType getType() const noexcept;
 
             /**
              * This method retrieves the description assigned to this container.
              * 
              * @return {string} The description of the argument stored in this container.
              */
-            std::string getDescription() const;
+            std::string getDescription() const noexcept;
             
             /**
              * This method retrives the list of identifiers registered to this
@@ -50,7 +50,7 @@ namespace ArgsParser
              * 
              * @return {vector<string>} The list of identifiers associated with this container.
              */
-            std::vector<std::string> getIdentifiers() const;
+            std::vector<std::string> getIdentifiers() const noexcept;
 
             /**
              * This method retrieves whether this container is active. This is
@@ -59,7 +59,7 @@ namespace ArgsParser
              * 
              * @return {bool} Whether the parser found this container in the command line.
              */
-            bool isActive() const;
+            bool isActive() const noexcept;
 
             /**
              * Constructor of the container class.

@@ -40,23 +40,23 @@ namespace ArgsParser
         return copy;
     }
 
-    std::string Container::getName() const{
+    std::string Container::getName() const noexcept{
         return name_;
     };
 
-    ArgType Container::getType() const{
+    ArgType Container::getType() const noexcept{
         return type_;
     }
 
-    std::string Container::getDescription() const{
+    std::string Container::getDescription() const noexcept{
         return description_;
     };
 
-    std::vector<std::string> Container::getIdentifiers() const{
+    std::vector<std::string> Container::getIdentifiers() const noexcept{
         return identifiers_;
     };
 
-    bool Container::isActive() const{
+    bool Container::isActive() const noexcept{
         return active_;
     };
 

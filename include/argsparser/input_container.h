@@ -27,7 +27,7 @@ namespace ArgsParser
              * 
              * @return {string} The placeholder text associated with this input argument.
              */
-            virtual std::string getPlaceholderText() const;
+            virtual std::string getPlaceholderText() const noexcept;
 
             /**
              * This method retrieves user input how it was parsed from the
@@ -35,7 +35,7 @@ namespace ArgsParser
              * 
              * @return {vector<string>} The list of user inputs parsed to this container.
              */
-            std::vector<std::string> getUserInput() const;
+            std::vector<std::string> getUserInput() const noexcept;
 
             /**
              * This method returns the number of independent inputs parsed to this
@@ -43,7 +43,7 @@ namespace ArgsParser
              * 
              * @return {size_t} The size of the list of user inputs parsed to this container.
              */
-            size_t getInputSize();
+            size_t getInputSize() const noexcept;
 
             /**
              * This method returns the maximum number of independent inputs that this
@@ -51,14 +51,14 @@ namespace ArgsParser
              * 
              * @return {size_t} The maximum number of inputs that this container can hold.
              */
-            size_t getMaxInputs();
+            size_t getMaxInputs() const noexcept;
 
             /**
              * This method returns the wrapped value of this container.
              * 
              * @return {ValueWrapper} The wrapped state and input stored in this container.
              */
-            ValueWrapper getValue() const;
+            ValueWrapper getValue() const noexcept;
 
             /**
              * This method returns the validation state of the user input as a
@@ -67,7 +67,7 @@ namespace ArgsParser
              * 
              * @return {pair<bool, string>} The validation state and error message (if failure).
              */
-            std::pair<bool, std::string> getValidation() const;
+            std::pair<bool, std::string> getValidation() const noexcept;
 
             /**
              * This is the constructor for the user input container.
