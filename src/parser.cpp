@@ -84,23 +84,23 @@ namespace ArgsParser
         std::swap(first.parser_impl, second.parser_impl);
     }
 
-    std::string Parser::getProgramName() const{
+    std::string Parser::getProgramName() const noexcept {
         return parser_impl->program_name;
     }
 
-    void Parser::setProgramName(const std::string& name){
+    void Parser::setProgramName(const std::string& name) {
         parser_impl->program_name = name;
     }
 
-    Token Parser::isRegistered(const std::string& symbol){
+    Token Parser::isRegistered(const std::string& symbol) const noexcept{
         return (isNameRegistered(symbol) || isIdentifierRegistered(symbol));
     }
 
-    Token Parser::isNameRegistered(const std::string& name) const{
+    Token Parser::isNameRegistered(const std::string& name) const noexcept{
         return parser_impl->names.count(name) > 0? parser_impl->names[name] : NULL_TOKEN;
     }
 
-    Token Parser::isIdentifierRegistered(const std::string& identifier){
+    Token Parser::isIdentifierRegistered(const std::string& identifier) const noexcept{
         try {
             // First check if this is a proper identifier. If not, make one.
             const std::string identifier_ = 
@@ -108,12 +108,8 @@ namespace ArgsParser
 
             return parser_impl->identifiers.count(identifier_) > 0? parser_impl->identifiers[identifier_] : NULL_TOKEN;
         }
-        catch (const std::exception& e) {
-            if (no_except_) {
-                setError(e.what());
-                return NULL_TOKEN;
-            }
-            else throw;
+        catch (const std::exception&) { // Catch exception thrown by make_identifier if the identifier string is invalid.
+            return NULL_TOKEN;
         }
     }
 
@@ -216,20 +212,14 @@ namespace ArgsParser
         return names;
     }
 
-    const Container* Parser::getContainer(const std::string& name){
+    const Container* Parser::getContainer(const std::string& name) const noexcept{
         return getContainer(isRegistered(name));
     }
 
-    const Container* Parser::getContainer(const Token& token){
-        try {
-            return const_cast<Container*>(parser_impl->getContainer(token));
-        }
-        catch (const std::exception&) {
-            if (no_except_) {
-                setError("Invalid token.");
-                return nullptr; }
-            else throw std::invalid_argument("Invalid token.");
-        }
+    const Container* Parser::getContainer(const Token& token) const noexcept{
+
+        return const_cast<Container*>(parser_impl->getContainer(token));
+
     }
 
     void Parser::parse(int argc, char* argv[]){
@@ -296,11 +286,11 @@ namespace ArgsParser
         };
     };
 
-    ValueWrapper Parser::getValue(const std::string& name) {
+    ValueWrapper Parser::getValue(const std::string& name) const noexcept{
         return getValue(isRegistered(name));
     };
 
-    ValueWrapper Parser::getValue(const Token& token) {
+    ValueWrapper Parser::getValue(const Token& token) const noexcept{
         const InputContainer* container = dynamic_cast<const InputContainer*>(getContainer(token));
         if (container != nullptr) return container->getValue();
         else return {std::vector<std::string>(), container->isActive()};
