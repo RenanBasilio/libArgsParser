@@ -43,26 +43,13 @@ namespace ArgsParser
             // Accessor Operators
             ValueWrapper operator[](const std::string& name) const;
             ValueWrapper operator[](const Token& token) const;
-            template <typename T> TypedValueWrapper<T> operator[](const std::string& name) const
-            {
-                return getValue<T>(name);
-            };
-            template <typename T> TypedValueWrapper<T> operator[](const Token& token) const
-            {
-                return getValue<T>(token);
-            };
+            template <typename T> const TypedValueWrapper<T> operator[](const std::string& name) const;
+            template <typename T> const TypedValueWrapper<T> operator[](const Token& token) const;
 
             ValueWrapper getValue(const std::string& name) const;
             ValueWrapper getValue(const Token& token) const;
-            template <typename T> TypedValueWrapper<T> getValue(const std::string& name) const
-            {
-                return getValue<T>(isRegistered(name));
-            };
-            template <typename T> TypedValueWrapper<T> getValue(const Token& token) const
-            {
-                TypedInputContainer<T>* container = dynamic_cast<TypedInputContainer<T>*>(getContainer(token));
-                return container->getConvertedValue();
-            };
+            template <typename T> const TypedValueWrapper<T> getValue(const std::string& name) const;
+            template <typename T> const TypedValueWrapper<T> getValue(const Token& token) const;
 
             const unsigned short& error_code;
             const std::string& error_description;
@@ -126,54 +113,14 @@ namespace ArgsParser
                 const Validator<T>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
-            ){
-                try{
-                    // First check if name is already registered.
-                    if(isNameRegistered(name))
-                        throw std::runtime_error("Name \"" + name + "\" is already registered.");
-
-                    TypedInputContainer<T>* container = new TypedInputContainer<T>(
-                        ArgType::Positional,
-                        name,
-                        std::vector<std::string>(),
-                        "",
-                        placeholder_text,
-                        1,
-                        converter,
-                        validator,
-                        error_callback,
-                        callback
-                    );
-
-                    Token id = registerContainer(ArgType::Positional, container);
-
-                    return id;
-                }
-                catch (const std::exception& e){
-                    std::string error_string = std::string("Registration Error: ") + e.what();
-
-                    if(!no_except_) throw std::runtime_error(error_string);
-                    else setError(error_string);
-
-                    return NULL_TOKEN;
-                }
-            }
+            );
             Token registerPositional(
                 const std::string& name,
                 const std::string& placeholder_text,
                 const Validator<std::string>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
-            ){
-                return registerPositional<std::string>(
-                    name,
-                    placeholder_text,
-                    nullptr,
-                    validator,
-                    error_callback,
-                    callback
-                );
-            }
+            );
 
             /**
              * This method registers a switch to the parser. Usage example:
@@ -246,48 +193,7 @@ namespace ArgsParser
                 const Validator<T>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
-            ){
-                try{
-                    // First check if all identifiers are open to be registered.
-                    if(isNameRegistered(name)) 
-                        throw std::runtime_error( "Name \"" + name + "\" is already registered." );
-
-                    std::vector<std::string> identifiers_(identifiers.size());
-                    for(size_t i = 0; i < identifiers.size(); i++)
-                    {
-                        identifiers_[i] = ArgsTools::make_identifier(identifiers[i]);
-                        if(isIdentifierRegistered(identifiers_[i]))
-                            throw std::runtime_error( "Identifier \"" + identifiers_[i] + "\" is already registered." );
-                    }
-                
-                    // If check was successful, create a new container object.
-                    TypedInputContainer<T>* container = new TypedInputContainer<T>(
-                        ArgType::Option,
-                        name,
-                        identifiers_,
-                        description,
-                        placeholder_text,
-                        max_values,
-                        converter,
-                        validator,
-                        error_callback,
-                        callback
-                    );
-
-                    // And push the container to the array of registered options.
-                    Token id = registerContainer(ArgType::Option, container);
-
-                    return id;
-                }
-                catch (const std::exception& e) {
-                    std::string error_string = std::string("Registration Error: ") + e.what();
-
-                    if(!no_except_) throw std::runtime_error(error_string);
-                    else setError(error_string);
-
-                    return NULL_TOKEN;
-                }
-            }
+            );
             Token registerOption(
                 const std::string& name,
                 const std::vector<std::string>& identifiers,
@@ -297,19 +203,7 @@ namespace ArgsParser
                 const Validator<std::string>& validator = nullptr,
                 const ErrorHandler& error_callback = nullptr,
                 const Callback& callback = nullptr
-            ){
-                return registerOption<std::string>(
-                    name,
-                    identifiers,
-                    placeholder_text,
-                    description,
-                    max_values,
-                    nullptr,
-                    validator,
-                    error_callback,
-                    callback
-                );
-            }
+            );
 
             /**
              * This method returns a vector of all tokens that have been
@@ -394,5 +288,129 @@ namespace ArgsParser
              * @param {std::string} user_input The user input data.
              */
             void setActive(const Token token, const std::string& user_input = nullptr);
+    };
+
+
+    ////////////////////// Definition of Template Methods //////////////////////////////
+
+
+    template <typename T>
+    const TypedValueWrapper<T> Parser::operator[](const Token& token) const
+    {
+        return getValue<T>(token);
+    };
+
+    template <typename T>
+    const TypedValueWrapper<T> Parser::operator[](const std::string& name) const
+    {
+        return getValue<T>(name);
+    };
+
+    template <typename T>
+    const TypedValueWrapper<T> Parser::getValue(const std::string& name) const
+    {
+        return getValue<T>(isRegistered(name));
+    };
+
+    template <typename T>
+    const TypedValueWrapper<T> Parser::getValue(const Token& token) const
+    {
+        const TypedInputContainer<T>* container = dynamic_cast<const TypedInputContainer<T>*>(getContainer(token));
+        return container->getConvertedValue();
+    };
+
+    template <typename T>
+    Token Parser::registerPositional(
+        const std::string& name,
+        const std::string& placeholder_text,
+        const Converter<T>& converter,
+        const Validator<T>& validator,
+        const ErrorHandler& error_callback,
+        const Callback& callback
+    ){
+        try{
+            // First check if name is already registered.
+            if(isNameRegistered(name))
+                throw std::runtime_error("Name \"" + name + "\" is already registered.");
+
+            TypedInputContainer<T>* container = new TypedInputContainer<T>(
+                ArgType::Positional,
+                name,
+                std::vector<std::string>(),
+                "",
+                placeholder_text,
+                1,
+                converter,
+                validator,
+                error_callback,
+                callback
+            );
+
+            Token id = registerContainer(ArgType::Positional, container);
+
+            return id;
+        }
+        catch (const std::exception& e){
+            std::string error_string = std::string("Registration Error: ") + e.what();
+
+            if(!no_except_) throw std::runtime_error(error_string);
+            else setError(error_string);
+
+            return NULL_TOKEN;
+        }
+    };
+
+    template <typename T>
+    Token Parser::registerOption(
+        const std::string& name,
+        const std::vector<std::string>& identifiers,
+        const std::string& placeholder_text,
+        const std::string& description,
+        const size_t max_values,
+        const Converter<T>& converter,
+        const Validator<T>& validator,
+        const ErrorHandler& error_callback,
+        const Callback& callback
+    ){
+        try{
+            // First check if all identifiers are open to be registered.
+            if(isNameRegistered(name)) 
+                throw std::runtime_error( "Name \"" + name + "\" is already registered." );
+
+            std::vector<std::string> identifiers_(identifiers.size());
+            for(size_t i = 0; i < identifiers.size(); i++)
+            {
+                identifiers_[i] = ArgsTools::make_identifier(identifiers[i]);
+                if(isIdentifierRegistered(identifiers_[i]))
+                    throw std::runtime_error( "Identifier \"" + identifiers_[i] + "\" is already registered." );
+            }
+        
+            // If check was successful, create a new container object.
+            TypedInputContainer<T>* container = new TypedInputContainer<T>(
+                ArgType::Option,
+                name,
+                identifiers_,
+                description,
+                placeholder_text,
+                max_values,
+                converter,
+                validator,
+                error_callback,
+                callback
+            );
+
+            // And push the container to the array of registered options.
+            Token id = registerContainer(ArgType::Option, container);
+
+            return id;
+        }
+        catch (const std::exception& e) {
+            std::string error_string = std::string("Registration Error: ") + e.what();
+
+            if(!no_except_) throw std::runtime_error(error_string);
+            else setError(error_string);
+
+            return NULL_TOKEN;
+        }
     };
 }

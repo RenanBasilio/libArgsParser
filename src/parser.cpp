@@ -273,7 +273,7 @@ namespace ArgsParser
             activeContainers[i]->postProcess();
         };
     };
-
+    
     ValueWrapper Parser::operator[](const std::string& name) const{
         return getValue(name);
     };
@@ -290,6 +290,46 @@ namespace ArgsParser
         const InputContainer* container = dynamic_cast<const InputContainer*>(getContainer(token));
         if (container != nullptr) return container->getValue();
         else return {std::vector<std::string>(), container->isActive()};
+    };
+
+    Token Parser::registerPositional(
+        const std::string& name,
+        const std::string& placeholder_text,
+        const Validator<std::string>& validator,
+        const ErrorHandler& error_callback,
+        const Callback& callback
+    ){
+        return registerPositional<std::string>(
+            name,
+            placeholder_text,
+            nullptr,
+            validator,
+            error_callback,
+            callback
+        );
+    };
+
+    Token Parser::registerOption(
+        const std::string& name,
+        const std::vector<std::string>& identifiers,
+        const std::string& placeholder_text,
+        const std::string& description,
+        const size_t max_values,
+        const Validator<std::string>& validator,
+        const ErrorHandler& error_callback,
+        const Callback& callback
+    ){
+        return registerOption<std::string>(
+            name,
+            identifiers,
+            placeholder_text,
+            description,
+            max_values,
+            nullptr,
+            validator,
+            error_callback,
+            callback
+        );
     };
 
     Container* Parser::ParserImpl::getContainer(const Token& token) const{
