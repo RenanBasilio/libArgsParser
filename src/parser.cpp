@@ -249,10 +249,12 @@ namespace ArgsParser
                 }
                 else // This is a value
                 {
-                    std::cout << "Found value " << current << std::endl;
                     // If there is no current container, this is a positional, so load the container.
-                    if(currentContainer == nullptr && (size_t)positional < parser_impl->registered_positionals.size()) 
-                        parser_impl->getContainer({ArgType::Positional, (unsigned short)positional});
+                    if(currentContainer == nullptr && (size_t)positional < parser_impl->registered_positionals.size()) {
+                        currentContainer = dynamic_cast<InputContainer*>(
+                            parser_impl->getContainer({ArgType::Positional, (unsigned short)positional}));
+                            activeContainers.push_back(currentContainer);
+                    }
                     
                     // If a container is loaded
                     if(currentContainer != nullptr)

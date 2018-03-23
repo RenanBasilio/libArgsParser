@@ -81,7 +81,6 @@ namespace ArgsParser
     };
 
     void InputContainer::postProcess(){
-
         if (validator_ != nullptr) {
             for (size_t i = 0; i < user_input_.size(); i++) {
                 try{
