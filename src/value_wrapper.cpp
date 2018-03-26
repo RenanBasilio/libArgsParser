@@ -19,8 +19,8 @@ namespace ArgsParser
         return user_input;
     };
 
-    ValueWrapper::operator const char *() const noexcept {
-        return to_string().c_str();
+    ValueWrapper::operator std::string() const noexcept {
+        return to_string();
     };
 
     std::string ValueWrapper::operator[](size_t position) const noexcept {
