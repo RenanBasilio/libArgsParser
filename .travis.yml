@@ -1,10 +1,17 @@
 language: cpp
-compiler:
- - g++
 
-os:
- - linux
- - osx
+matrix:
+  include:
+    - os: linux
+      compiler: g++
+    - os: linux
+      compiler: clang
+    - os: osx
+      compiler: g++
+    - os: osx
+      compiler: clang
+
+script: mkdir build && cd build && cmake .. && cmake --build .
 
 branches:
  only:
@@ -14,4 +21,5 @@ branches:
 dist: trusty
 install: true
 
-script: mkdir build && cd build && cmake .. && cmake --build . --config Release
+notifications:
+  email: false
