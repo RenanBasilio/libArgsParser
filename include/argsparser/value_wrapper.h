@@ -21,8 +21,8 @@ namespace ArgsParser
         // Implicit conversion to bool.
         operator bool() const noexcept;
 
-        // Implicit conversion to c string.
-        operator const char*() const noexcept;
+        // Implicit conversion to string.
+        operator std::string() const noexcept;
         
         // Implicit conversion to vector of strings.
         operator std::vector<std::string>() const noexcept;
