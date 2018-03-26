@@ -16,16 +16,15 @@ namespace ArgsParser
     };
 
     ValueWrapper::operator std::string() const noexcept {
-        std::string fullStr = user_input[0];
-        for (size_t i = 1; i < user_input.size(); i++)
-        {
-            fullStr += user_input[i];
-        }
-        return fullStr;
+        return to_string();
     };
 
     ValueWrapper::operator std::vector<std::string>() const noexcept {
         return user_input;
+    };
+
+    ValueWrapper::operator const char *() const noexcept {
+        return to_string().c_str();
     };
 
     std::string ValueWrapper::operator[](size_t position) const noexcept {
@@ -41,5 +40,14 @@ namespace ArgsParser
 
     size_t ValueWrapper::size() const noexcept {
         return user_input.size();
+    }
+
+    std::string ValueWrapper::to_string() const noexcept {
+        std::string string;
+        for (size_t i = 0; i < size(); i++) {
+            string += user_input[i];
+            if (i < size() - 1) string += " ";
+        }
+        return string;
     }
 }

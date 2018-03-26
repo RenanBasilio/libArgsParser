@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
     myParser.registerPositional<int>(
         "positional",
         "integer",
-        [&myParser](){ std::cout << "Entered value " << std::to_string((int)myParser.getValue<int>("positional")) << std::endl; },
+        [&myParser](){ std::cout << "Entered value " << std::to_string(myParser.getValue<int>("positional")) << std::endl; },
         [](const std::string& str)->int{ return std::stoi(str); },
         [value](const int& i)->bool{ bool valid = i < value ? true : false; return valid; },
         [](const std::exception& e){ std::cout << e.what(); }
@@ -34,11 +34,9 @@ int main(int argc, char* argv[]){
         "string",
         "Print <string> to the console.",
         1,
-        [&myParser](){ std::cout << (std::string)myParser.getValue("reflect") << std::endl; },
-        [](const std::string& str)->bool{ return true; },
-        ArgsTools::print_error
+        [&myParser](){ std::cout << myParser.getValue("reflect") << std::endl; }
     );
-
+    
     // Parse the command line.
     myParser.parse(argc, argv);
 
