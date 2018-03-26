@@ -20,9 +20,6 @@ namespace ArgsParser
 
         // Implicit conversion to bool.
         operator bool() const noexcept;
-        
-        // Implicit conversion to string.
-        operator std::string() const noexcept;
 
         // Implicit conversion to c string.
         operator const char*() const noexcept;
