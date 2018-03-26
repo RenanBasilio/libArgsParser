@@ -34,7 +34,7 @@ int main(int argc, char* argv[]){
         "string",
         "Print <string> to the console.",
         1,
-        [&myParser](){ std::cout << myParser.getValue("reflect") << std::endl; }
+        [&myParser](){ std::cout << (std::string)myParser.getValue("reflect") << std::endl; }
     );
     
     // Parse the command line.
