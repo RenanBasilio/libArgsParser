@@ -15,4 +15,5 @@
 #include <argsparser/parser.h>
 #include <argsparser/typed_input_container.h>
 #include <argsparser/value_wrapper.h>
+#include <argsparser/version.hpp>
 #include <argsparser/util.h>
