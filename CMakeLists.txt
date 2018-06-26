@@ -13,8 +13,8 @@
 # Install:
 # > cmake --build . --target install
 
-cmake_minimum_required(VERSION 3.9)
-project(argsparser DESCRIPTION "A simple C++ command line argument parser.")
+cmake_minimum_required(VERSION 3.5)
+project(argsparser CXX)
 include(GNUInstallDirs)
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
