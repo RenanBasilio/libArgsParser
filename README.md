@@ -1,5 +1,5 @@
 # ArgsParser - C++ Command Line Argument Parser
-[![Build Status](https://travis-ci.org/RenanBasilio/ArgsParser.svg?branch=master)](https://travis-ci.org/RenanBasilio/ArgsParser)
+[![Build Status](https://travis-ci.org/RenanBasilio/ArgsParser.svg?branch=master)](https://travis-ci.org/RenanBasilio/libArgsParser.svg?branch=master)
 [![Build status](https://ci.appveyor.com/api/projects/status/y9619y0sipb55wbu/branch/master?svg=true)](https://ci.appveyor.com/project/RenanBasilio/argsparser/branch/master)
 
 ArgsParser is a C++ static library written with the goal of providing an easy to use yet thorough command line argument parser for C++. It is intended to simplify the process of parsing said arguments by providing an interface which can parse, verify and apply any post processing required to user input.
